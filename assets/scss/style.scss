@@ -1,0 +1,115 @@
+$border-color: #d1d5db !default;
+$app-background: #f9fafb !default;
+$currentColor: #d1d5db !default;
+$border-rounded: 4px !default;
+$rounded-md: 6px;
+
+/* main.css */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("../fonts/Poppins-Regular.ttf") format("truetype");
+}
+
+* {
+  font-family: Poppins !important;
+}
+
+/* background*/
+.v-main__wrap {
+  background: $app-background;
+}
+body {
+  background-color: #f9fafb;
+}
+/* common */
+.expand {
+  width: 100%;
+}
+.link {
+  color: #6b7280 !important;
+}
+.transparent {
+  background: transparent !important;
+}
+/* text  */
+
+.v-application .body-2 {
+  color: #6b7280 !important;
+}
+
+.plain-txt {
+  color: #111827 !important;
+}
+.v-application .purple-text {
+  // color: #8431e7 !important;
+  color: #8431e7 !important;
+}
+
+:root {
+  --circle-size: clamp(2rem, 4vw, 2rem);
+  --spacing: clamp(0.25rem, 2vw, 0.5rem);
+}
+
+/* button  */
+.primary-btn.v-btn {
+  background: #8431e7 !important;
+  opacity: 1 !important;
+}
+.primary-btn,
+.primary-btn i {
+  color: #fff !important;
+}
+.plain-btn {
+  border: 1px solid $border-color;
+  background-color: #fff !important;
+}
+/* end of button  */
+.text--white {
+  color: white !important;
+}
+.red--text {
+  color: rgb(176, 0, 32);
+}
+.grey--text {
+  color: #757575;
+}
+.black--text {
+  color: #000000;
+}
+.side-container {
+  background-image: url("@/assets/images/bg_auth.webp");
+  background-position: center;
+  background-size: cover;
+  padding: 4em;
+}
+
+.bg-signup-container {
+  background-image: url("@/assets/images/bg-signup-success.webp");
+  background-position: center;
+  background-size: cover;
+  padding: 2em !important;
+  border-radius: 8px;
+  width: 550px;
+  min-width: 300px;
+}
+@media (max-width: 550px) {
+  .bg-signup-container {
+    width: 400px;
+  }
+}
+
+.signup-bg {
+  background-image: url("@/assets/image/signup-bg.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.side-container-pollen-pass {
+  background-image: url("~/assets/images/bg_auth_pollen_pass.webp");
+  background-position: center;
+  background-size: cover;
+  padding: 4em;
+}

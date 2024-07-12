@@ -1,0 +1,28 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@auth0/auth0-vue": "^2.3.3",
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.5.1",
+    "moment": "^2.30.1",
+    "nuxt": "^3.12.3",
+    "pinia": "^2.1.7",
+    "vue": "latest",
+    "vue-tel-input": "^9.1.4"
+  },
+  "devDependencies": {
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
+    "sass": "^1.77.8",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vuetify": "^3.6.12"
+  }
+}
