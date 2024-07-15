@@ -8,6 +8,7 @@ const LMSTheme = {
   dark: false,
   colors: {
     background: "#f9fafb",
+    color: "#111827",
     surface: "#f9fafb",
     primary: "#8431e7",
     "primary-darken-1": "#3700B3",

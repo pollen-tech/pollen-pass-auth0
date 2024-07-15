@@ -18,8 +18,9 @@
     </ul>
     <p class="text-start text-white font-weight-medium mt-4">
       - Powered by
-      <a class="text-decoration-underline font-weight-bold" style="color: white"
-        >Pollen.tech</a
+      <a href=" https://www.pollen.tech" class="text-decoration-underline font-weight-bold" style="color: #FDE68A;
+"
+        >Pollen Pass</a
       >
     </p>
   </v-sheet>
