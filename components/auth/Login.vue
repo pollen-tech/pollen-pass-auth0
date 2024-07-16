@@ -1,19 +1,19 @@
 <template>
   <div>
     <div
-      class="d-flex flex-column align-center mx-16"
+      class="d-flex flex-column align-center mx-16 "
       :style="{
         'margin-top': $vuetify.display.mobile ? '20px' : '10%',
       }"
     >
       <div class="text-caption justify-center mb-12 d-flex">
         <img
-          src="~/assets/images/pollen-save.svg"
+          src="~/assets/images/pollen.svg"
           class="mx-4"
           style="width: 50px"
         />
         <div>
-          <p class="font-weight-bold">
+          <p class="font-weight-bold" style="font-size: 14px;">
             {{ notification.title }}
           </p>
           <p>
@@ -21,7 +21,8 @@
           </p>
         </div>
       </div>
-      <h3>{{ title }}</h3>
+      <h3 style="color: #111827; font-size: 20px;">{{ title }}</h3>
+      <p style="color: #111827; font-size: 14px;">{{ desc }}</p>
 
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -31,17 +32,20 @@
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
-              >Email <span class="red--text">*</span>
+            style="font-size: 14px;"
+              >Enter Email Address
+              <!--<span class="red--text">*</span>-->
             </label>
 
             <v-text-field
               v-model="item.email"
               variant="outlined"
-              placeholder="Enter First Name"
+              placeholder="Enter valid email address"
               :rules="required"
+              class="custom-text-field"
             ></v-text-field>
           </div>
-          <v-checkbox
+          <!--<v-checkbox
             v-model="checkAcceptTerms"
             hide-details
             @change="checkTerms()"
@@ -60,15 +64,16 @@
                 </a>
               </div>
             </template>
-          </v-checkbox>
+          </v-checkbox>-->
           <v-btn
-            class="my-4 me-auto text-capitalize rounded-lg"
+            class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
             :loading="isLoading"
             @click="submit"
-            >Continue</v-btn
+            >Sign in</v-btn
           >
+          <p class="text-center" style="color: #111827; font-size: 14px;">Want to access Pollen LMS? <a href='/auth/signup' class="link">Sign Up with Pollen Pass</a></p>
         </v-form>
       </v-card>
 
@@ -113,10 +118,13 @@ const { countries } = storeToRefs(countryStore);
 
 const sellerStore = useSellerStore();
 
-const title = ref("Enter your information");
+const title = ref("Login");
+const desc = ref("Login to your Pollen Pass account");
+const SignupDesc = ref("Want to access Pollen LMS? <a href='/auth/signup'>Sign Up with Pollen Pass</a>");
+
 const notification = ref({
-  title: "Get 24/7 Clearance Sales On 100% Authentic Items with Pollen Pass",
-  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
+  title: "How to Start Selling with Pollen's Liquidation Management System",
+  desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
 });
 const item = ref({ items: [] });
 const rules = reactive({
@@ -134,7 +142,7 @@ const isLoading = ref(false);
 const showDialog = ref(false);
 const validateCompanyName = ref(0);
 const selectedItem = ref(null);
-const checkAcceptTerms = ref(false);
+//const checkAcceptTerms = ref(false);
 
 const fetchCity = async (val) => {
   items.value.city = null;
@@ -152,7 +160,7 @@ const onValidateCompanyName = () => {
   validateCompanyName.value = 2;
 };
 
-const checkTerms = () => {};
+//const checkTerms = () => {};
 
 onMounted(async () => {
   countryStore.getCountries();
@@ -177,5 +185,29 @@ onMounted(async () => {
   left: -12px; /* Position arrow on the right side */
   transform: translateY(-50%);
   font-size: 16px; /* Adjust the size of the arrow icon */
+}
+.custom-text-field .v-input__control .v-field__field,
+.custom-text-field .v-input__control .v-field__field input {
+  max-height: 40px !important;
+  min-height: 40px !important;
+}
+.custom-text-field .v-input__control {
+
+}
+.custom-button {
+  height: 40px !important;
+  font-size: 16px !important;
+  padding: 8px 20px;
+  border-radius: 6px !important;
+
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+.link {
+  color: #8431E7 !important;
+  text-decoration: none;
 }
 </style>
