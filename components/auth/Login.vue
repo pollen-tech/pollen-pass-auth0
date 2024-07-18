@@ -108,15 +108,15 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { useSellerStore } from "@/store/seller";
-import { useCountryStore } from "@/store/country";
+//import { useSellerStore } from "@/store/seller";
+//import { useCountryStore } from "@/store/country";
 
 const emit = defineEmits(["submit"]);
 
-const countryStore = useCountryStore();
-const { countries } = storeToRefs(countryStore);
+//const countryStore = useCountryStore();
+//const { countries } = storeToRefs(countryStore);
 
-const sellerStore = useSellerStore();
+//const sellerStore = useSellerStore();
 
 const title = ref("Login");
 const desc = ref("Login to your Pollen Pass account");
@@ -127,11 +127,11 @@ const notification = ref({
   desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
 });
 const item = ref({ items: [] });
-const rules = reactive({
-  required: (value) => !!value || "Required.",
-  min: (v) => v.length >= 8 || "Min 8 characters",
-  emailMatch: () => `The email and password you entered don't match`,
-});
+//const rules = reactive({
+//  required: (value) => !!value || "Required.",
+//  min: (v) => v.length >= 8 || "Min 8 characters",
+//  emailMatch: () => `The email and password you entered don't match`,
+//});
 const required = [(v) => !!v || "Field is required"];
 const requiredEmail = [
   (v) =>
@@ -140,30 +140,31 @@ const requiredEmail = [
 ];
 const isLoading = ref(false);
 const showDialog = ref(false);
-const validateCompanyName = ref(0);
-const selectedItem = ref(null);
+//const validateCompanyName = ref(0);
+//const selectedItem = ref(null);
 //const checkAcceptTerms = ref(false);
 
-const fetchCity = async (val) => {
-  items.value.city = null;
-  if (val) {
-    cities.value = await countryStore.getCities(val);
-  }
-};
+//const fetchCity = async (val) => {
+//  items.value.city = null;
+//  if (val) {
+//    cities.value = await countryStore.getCities(val);
+//  }
+//};
 
 const submit = () => {
   emit("submit");
+  console.log('item', item.value);
 };
 
-const onValidateCompanyName = () => {
-  console.log(item.value);
-  validateCompanyName.value = 2;
-};
+//const onValidateCompanyName = () => {
+//  console.log(item.value);
+//  validateCompanyName.value = 2;
+//};
 
 //const checkTerms = () => {};
 
 onMounted(async () => {
-  countryStore.getCountries();
+  //countryStore.getCountries();
 });
 </script>
 <style>
@@ -190,9 +191,6 @@ onMounted(async () => {
 .custom-text-field .v-input__control .v-field__field input {
   max-height: 40px !important;
   min-height: 40px !important;
-}
-.custom-text-field .v-input__control {
-
 }
 .custom-button {
   height: 40px !important;
