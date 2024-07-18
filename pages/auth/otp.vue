@@ -202,63 +202,49 @@ export default {
     },
     async sendOtp(type = "sms") {
       console.log('sendSMS');
-      // type = 'whatsapp'
-      //const referenceId = this.user.referenceId || this.id;
       this.otpType = type;
-      //const url = `${this.config.public.API_URL}/otp/send`;
-      //const body = {
-      //  country_code: this.user.countryCode,
-      //  phone_no: this.user.phoneNumber,
-      //  method: "sms"
-      //};
+      const user = this.userStore.getUser();
 
-      //const otpMessage = await api(url, "POST", body);
-      //if (!otpMessage.statusCode) {
-      //  this.isOtpPage = true;
-      //  return otpMessage;
-      //} else {
-      //  this.getErrorMessage(otpMessage);
-      //}
+      const payload = {
+        country_code: parseInt(user.countryCode, 10),
+        phone_no: parseInt(user.phoneNumber, 10),
+        method: "sms"
+      };
+     
       try {
         const response = await fetch(`${this.config.public.API_URL}/otp/send`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            country_code: this.userStore.getUser().countryCode,
-            phone_no: this.userStore.getUser().phoneNumber,
-            method: "sms"
-          })
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        //this.data.value = await response.json();
-        console.log(this.isOtpPage);
         this.isOtpPage = true;
-        console.log(this.isOtpPage);
-        //return this.data.value;
       } catch (error) {
-        //this.error.value = 'Failed to fetch data';
         console.log(error);
       }
     },
     async verifyOtpEvent(otp) {
-      console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
+      //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
+      const user = this.userStore.getUser();
+
+      const payload = {
+        user_id: user.user_id,
+        country_code: parseInt(user.countryCode, 10),
+        phone_no: parseInt(user.phoneNumber, 10),
+        otp: otp
+      };
       try {
         const response = await fetch(`${this.config.public.API_URL}/otp/validate-user-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            user_id: this.userStore.getUser().user_id,
-            country_code: this.userStore.getUser().countryCode,
-            phone_no: this.userStore.getUser().phoneNumber,
-            otp: otp
-          })
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
