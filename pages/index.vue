@@ -92,7 +92,9 @@ const showDialog = async () => {
   }
 };
 
-const onSignUp = () => {};
+const onSignUp = () => {
+  navigateTo("/auth/signup");
+};
 
 onMounted(() => {
   showDialog();
