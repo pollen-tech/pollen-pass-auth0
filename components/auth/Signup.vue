@@ -31,13 +31,39 @@
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
+              >First Name <span class="red--text">*</span>
+            </label>
+
+            <v-text-field
+              v-model="item.firstName"
+              variant="outlined"
+              placeholder="Enter First Name"
+              :rules="required"
+            ></v-text-field>
+          </div>
+
+          <div class="my-4 text-start flex-1-0">
+            <label class="font-weight-medium"
+              >Last Name <span class="red--text">*</span>
+            </label>
+
+            <v-text-field
+              v-model="item.lastName"
+              variant="outlined"
+              placeholder="Enter Last Name"
+              :rules="required"
+            ></v-text-field>
+          </div>
+
+          <div class="my-4 text-start flex-1-0">
+            <label class="font-weight-medium"
               >Email <span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.email"
               variant="outlined"
-              placeholder="Enter First Name"
+              placeholder="Enter Email"
               :rules="required"
             ></v-text-field>
           </div>
@@ -102,9 +128,22 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useSellerStore } from "@/store/seller";
 import { useCountryStore } from "@/store/country";
+import { useUserStore } from '@/store/user';
+import { useRuntimeConfig } from '#app';
+
+const userStore = useUserStore();
+
+let email = '';
+let firstName = '';
+let lastName = '';
+
+const data = ref(null);
+const error = ref(null);
+const loading = ref(true);
+const config = useRuntimeConfig();
 
 const emit = defineEmits(["submit"]);
 
@@ -143,8 +182,38 @@ const fetchCity = async (val) => {
   }
 };
 
-const submit = () => {
-  emit("submit");
+const submit = async () => {
+  emit("submit", item.value);
+  //console.log(process.env.AUTH0_CLIENT_ID)
+  const user = { email: item.value.email, firstName:item.value.firstName, lastName: item.value.lastName, channelCode: 'CH_POLLEN_PASS' };
+  userStore.setUser(user);
+  console.log(user);
+  let email = item.value.email;
+  try {
+    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-login/${email}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        //"client_id": config.public.AUTH0_CLIENT_ID,
+        //"client_secret": config.public.AUTH0_CLIENT_SECRET,
+        //"connection": "email",
+        //"email": item.value.email,
+        //"send": "code"
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    data.value = await response.json();
+    
+    navigateTo("/auth/verification");
+
+  } catch (err) {
+    error.value = 'Failed to fetch data';
+  }
 };
 
 const onValidateCompanyName = () => {

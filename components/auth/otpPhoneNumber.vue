@@ -5,9 +5,9 @@
         {{ isPhoneSave ? notificationTitle2 : notificationTitle1 }}
       </h3>
       <v-form ref="form" class="w-50">
-        <p class="font-weight-bold text-body-1 text-center mb-6">
+        <!--<p class="font-weight-bold text-body-1 text-center mb-6">
           Enter your Information
-        </p>
+        </p>-->
         <div class="my-2">
           <div class="d-flex">
             <label class="font-weight-medium text-body-2"
@@ -39,7 +39,13 @@
               showSearchBox: true,
               showFlags: true,
             }"
+            :inputOptions="{
+              showFlags: true,
+              autocomplete: false,
+            }"
             @validate="phoneObject"
+            @input="onPhoneInput"
+            @country-changed="onCountryChange"
           />
 
           <p v-if="!phoneValid" class="red--text text-caption mt-2">
@@ -126,6 +132,7 @@
 <script>
 import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
+import { useUserStore } from '~/store/user';
 
 export default {
   components: { VueTelInput },
@@ -144,7 +151,12 @@ export default {
       type: Boolean,
       default: false,
     },
+
   },
+  //setup(props) {
+  //  const userStore = useUserStore();
+  //  return { userStore };
+  //},
   data() {
     return {
       notificationTitle1: "Phone number Verification",
@@ -184,8 +196,31 @@ export default {
       }
     },
     savePhone() {
+    const userStore = useUserStore();
+    const user = userStore.getUser();
+
+      //console.log(this.isPhoneSave);
       this.$emit("otpEvent", this.phoneLocal);
+      this.$emit('update:isPhoneSave', true);
+      //console.log(this.phoneLocal)
+
+      console.log(userStore.getUser());
+      userStore.setUser({phoneNumber: this.phoneLocal, countryCode: this.countryCode});
+      console.log(userStore.getUser());
+
+
+      //user.countryCode = this.phoneLocal;
+      //console.log(this.isPhoneSave);
     },
+    onPhoneInput(phone, country) {
+      console.log('Phone countryCode:', this.countryCode);
+      console.log('Phone number:', this.phoneLocal);
+    },
+    onCountryChange(country) {
+      this.countryCode = country.dialCode;
+      console.log(this.countryCode);
+    },
+
   },
   mounted() {
     this.phoneLocal = this.phone || "";

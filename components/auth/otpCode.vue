@@ -65,6 +65,11 @@
   </div>
 </template>
 <script>
+//import { useUserStore } from '@/store/user';
+
+//const userStore = useUserStore();
+//const user = userStore.getUser();
+
 export default {
   props: {
     phonenumber: { type: String, default: "" },
@@ -103,6 +108,7 @@ export default {
   },
   methods: {
     sendPhoneNumber() {
+      console.log('sendPhoneNumber: ', this.otp);
       this.$emit("setOtpLoading", true);
 
       this.$emit("verifyOtpEvent", this.otp);
