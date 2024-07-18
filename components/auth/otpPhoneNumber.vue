@@ -202,10 +202,13 @@ export default {
       //console.log(this.isPhoneSave);
       this.$emit("otpEvent", this.phoneLocal);
       this.$emit('update:isPhoneSave', true);
-      //console.log(this.phoneLocal)
+      console.log(this.phoneLocal)
+      const cleanedPhoneNumber = this.phoneLocal.replace(/\s+/g, '');
+      console.log(cleanedPhoneNumber)
+
 
       console.log(userStore.getUser());
-      userStore.setUser({phoneNumber: this.phoneLocal, countryCode: this.countryCode});
+      userStore.setUser({phoneNumber: cleanedPhoneNumber, countryCode: this.countryCode});
       console.log(userStore.getUser());
 
 
