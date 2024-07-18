@@ -38,9 +38,10 @@
             :is-phone-save="isPhoneSave"
             @otp-event="getPhone"
             @send-otp="sendOtp"
+            @update:isPhoneSave="updateIsPhoneSave"
           />
           <!-- TODO add if user exist -->
-          <AuthFormOtpCode
+          <AuthOtpCode
             v-if="isOtpPage"
             :referenceId="user.referenceId"
             :phonenumber="user.phone"
@@ -48,7 +49,7 @@
             :isOtpLoading="isOtpLoading"
             :isOtpValid="isOtpValid"
             @previous-page="goToPhoneNumberPage"
-            @verify-otp-event="verifyOtp"
+            @verify-otp-event="verifyOtpEvent"
             @send-otp-event="resendOtp"
             @set-otp-loading="verifyOtpLoading"
           />
@@ -63,11 +64,18 @@
 import { mapState } from "pinia";
 import { useCommonStore } from "~/store/common";
 import { ppApi } from "~/services/api";
+import { useUserStore } from '~/store/user';
+
 export default {
   setup(props) {
     const commonStore = useCommonStore();
+    const userStore = useUserStore();
+    const config = useRuntimeConfig();
+    const data = ref(null);
+    const error = ref(null);
+    const loading = ref(true);
 
-    return { commonStore };
+    return { commonStore, userStore, config, data, error, loading };
   },
   data: () => ({
     config: null,
@@ -118,31 +126,31 @@ export default {
       this.savePhone(param);
     },
     async savePhone(param) {
-      const url = `${this.config.public.backendUrl}/otp/${this.id}/phone-number`;
-      const body = {
-        phoneNumber: param,
-      };
-      try {
-        const req = await api(url, "PATCH", body);
-        if (!req.statusCode) {
-          if (req.isVerified) {
-            this.isOtpValid = false;
-            this.isOtpLoading = false;
-            setTimeout(() => {
-              navigateTo("/auth/success");
-            }, 2000);
-          } else {
-            this.isPhoneSave = true;
-            this.isOtpLoading = false;
-            return;
-          }
-        } else {
-          this.getErrorMessage(req);
-        }
-      } catch (error) {
-        console.error("Something went wrong:", error);
-        this.isOtpLoading = false;
-      }
+      //const url = `${this.config.public.API_URL}/otp/send`;
+      //const body = {
+      //  phoneNumber: param,
+      //};
+      //try {
+      //  const req = await api(url, "PATCH", body);
+      //  if (!req.statusCode) {
+      //    if (req.isVerified) {
+      //      this.isOtpValid = false;
+      //      this.isOtpLoading = false;
+      //      setTimeout(() => {
+      //        navigateTo("/auth/success");
+      //      }, 2000);
+      //    } else {
+      //      this.isPhoneSave = true;
+      //      this.isOtpLoading = false;
+      //      return;
+      //    }
+      //  } else {
+      //    this.getErrorMessage(req);
+      //  }
+      //} catch (error) {
+      //  console.error("Something went wrong:", error);
+      //  this.isOtpLoading = false;
+      //}
     },
     async verifyOtp(param) {
       this.otp = param;
@@ -175,7 +183,7 @@ export default {
       }
     },
     verifyOtpLoading() {
-      this.isOtpLoading = true;
+      //this.isOtpLoading = true;
     },
     goToPhoneNumberPage() {
       this.otp = null;
@@ -193,25 +201,78 @@ export default {
       this.sendOtp(this.otpType);
     },
     async sendOtp(type = "sms") {
+      console.log('sendSMS');
       // type = 'whatsapp'
-      const referenceId = this.user.referenceId || this.id;
+      //const referenceId = this.user.referenceId || this.id;
       this.otpType = type;
-      const url = `${this.config.public.backendUrl}/otp/${referenceId}/${type}`;
-      const body = {
-        referenceId: this.user.referenceId,
-        phoneNumber: this.user.phone,
-        phoneCountryCode: "PH",
-      };
+      //const url = `${this.config.public.API_URL}/otp/send`;
+      //const body = {
+      //  country_code: this.user.countryCode,
+      //  phone_no: this.user.phoneNumber,
+      //  method: "sms"
+      //};
 
-      const otpMessage = await api(url, "POST", body);
-      if (!otpMessage.statusCode) {
+      //const otpMessage = await api(url, "POST", body);
+      //if (!otpMessage.statusCode) {
+      //  this.isOtpPage = true;
+      //  return otpMessage;
+      //} else {
+      //  this.getErrorMessage(otpMessage);
+      //}
+      try {
+        const response = await fetch(`${this.config.public.API_URL}/otp/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            country_code: this.userStore.getUser().countryCode,
+            phone_no: this.userStore.getUser().phoneNumber,
+            method: "sms"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        //this.data.value = await response.json();
+        console.log(this.isOtpPage);
         this.isOtpPage = true;
-        return otpMessage;
-      } else {
-        this.getErrorMessage(otpMessage);
+        console.log(this.isOtpPage);
+        //return this.data.value;
+      } catch (error) {
+        //this.error.value = 'Failed to fetch data';
+        console.log(error);
       }
     },
+    async verifyOtpEvent(otp) {
+      console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
+      try {
+        const response = await fetch(`${this.config.public.API_URL}/otp/validate-user-otp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: this.userStore.getUser().user_id,
+            country_code: this.userStore.getUser().countryCode,
+            phone_no: this.userStore.getUser().phoneNumber,
+            otp: otp
+          })
+        });
 
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        //this.data.value = await response.json();
+        console.log(this.isOtpPage);
+        this.isOtpPage = true;
+        console.log(this.isOtpPage);
+        navigateTo( "/auth/success");
+      } catch (error) {
+        console.log(error);
+      }
+    },
     getErrorMessage(req) {
       this.isPhoneExist = false;
       let errorMsg = req.message;
@@ -232,6 +293,9 @@ export default {
         status: "error",
         msg: errorMsg,
       });
+    },
+    updateIsPhoneSave(value) {
+      this.isPhoneSave = value;
     },
   },
 };

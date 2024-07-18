@@ -1,5 +1,24 @@
 <template>
   <div>
+    <v-row no-gutters>
+      <v-col cols="12" md="6" class="text-left">
+        <v-sheet>
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-chevron-left"
+            style="color: #6b7280"
+            class="text-capitalize"
+            @click="$emit('previousPage')"
+            alt="Back"
+          >
+            <template v-slot:prepend>
+              <v-icon color="#6B7280"></v-icon>
+            </template>
+            Previous
+          </v-btn>
+        </v-sheet>
+      </v-col>
+    </v-row>
     <div
       class="d-flex flex-column align-center mx-16"
       :style="{
@@ -16,9 +35,9 @@
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
             <v-text-field
-              v-model="item.email"
+              v-model="item.emailOTPCode"
               variant="outlined"
-              placeholder="Enter First Name"
+              placeholder="Enter Verification Code"
               :rules="required"
             ></v-text-field>
           </div>
@@ -77,6 +96,16 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRuntimeConfig } from '#app';
+import { useUserStore } from '@/store/user';
+
+const userStore = useUserStore();
+const user = userStore.getUser();
+
+const data = ref(null);
+const error = ref(null);
+const loading = ref(true);
+const config = useRuntimeConfig();
 
 const emit = defineEmits(["submit"]);
 
@@ -86,8 +115,44 @@ const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
 
-const submit = () => {
+const submit = async () => {
   emit("submit");
+  console.log(user);
+  let email = user.email;
+  let otp = item.value.emailOTPCode;
+  let channel_code = 'CH_POLLEN_PASS';
+
+  try {
+    console.log('params: ',email, otp, channel_code);
+    console.log(`${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}`);
+    console.log(JSON.stringify({
+        "email": email,
+        "code": otp,
+        "channel_code": channel_code
+      }));
+    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&channel_code=${channel_code}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    data.value = await response.json();
+    console.log(data.value);
+    console.log('data.value.user_id: ', data.value.user_id);
+    userStore.setUser({user_id: data.value.user_id});
+    console.log('userStore.getUser(): ', userStore.getUser());
+    navigateTo("/auth/otp");
+
+  } catch (err) {
+    error.value = 'Failed to fetch data';
+  }
 };
 
 const returnToLogin = () => {
