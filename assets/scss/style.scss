@@ -131,3 +131,51 @@ body {
   background-size: cover;
   padding: 4em;
 }
+
+.onboarding-header {
+  background-image: url("@/assets/image/onboarding-header.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+.landing-bg {
+  position: relative;
+}
+
+.landing-bg:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  background-image: url("@/assets/images/landing-bg.webp");
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+  background-size: cover;
+  opacity: 0.6;
+}
+
+.side-container {
+  background-image: url("~/assets/images/bg_auth_pollen_pass.webp");
+  background-position: center;
+  background-size: cover;
+  padding: 4em;
+}
+
+// toolbar
+.v-toolbar__title {
+  font-size: 0.9em;
+}
+
+.v-toolbar__title {
+  font-size: 0.9em;
+}
+
+.v-toolbar__content {
+  background-color: #fff;
+}
+
+// end of toolbar
