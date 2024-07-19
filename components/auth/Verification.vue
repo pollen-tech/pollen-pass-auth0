@@ -1,8 +1,10 @@
 <template>
   <div>
     <v-row no-gutters>
-      <v-col cols="12" md="6" class="text-left">
-        <v-sheet>
+      <v-col cols="12" md="12" class="text-left">
+        <v-sheet style="display: flex !important;
+    width: 100%;
+    justify-content: space-between;">
           <v-btn
             variant="text"
             prepend-icon="mdi-chevron-left"
@@ -16,6 +18,19 @@
             </template>
             Previous
           </v-btn>
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-account-circle-outline"
+            style="color: #6b7280; text-transform: none !important;"
+            class="text-capitalize"
+            @click="$emit('previousPage')"
+            alt="Back"
+          >
+            <template v-slot:prepend>
+              <v-icon color="#6B7280"></v-icon>
+            </template>
+            {{ emailLocal}}
+          </v-btn>
         </v-sheet>
       </v-col>
     </v-row>
@@ -26,31 +41,47 @@
       }"
     >
       <h3>{{ title }}</h3>
-
+      <p class="text-center my-6" style="color: #6B7280;">We have sent a 6-digit code to:</p>
+      <div class="my-2">
+          <p class="font-weight-bold text-center mb-4">
+            {{ user?.email }}
+          </p>
+        </div>
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
         elevation="0"
-        class="align-center my-4"
+        class="align-center mb-4"
       >
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
-            <v-text-field
+            <v-otp-input
               v-model="item.emailOTPCode"
-              variant="outlined"
-              placeholder="Enter Verification Code"
+              :length="otpLength"
               :rules="required"
-            ></v-text-field>
+            ></v-otp-input>
           </div>
 
           <div class="text-center my-4 grey--text">
             <p>
               Didn’t receive a code?
-
+              <span v-if="timerRunning" class="black--text">
+                Resend in <span class="font-weight-bold">{{ formatTime }}</span>
+              </span>
+              <v-btn
+                v-else
+                class="purple-text text-capitalize text-body-1 pa-0"
+                variant="text"
+                @click="resendEmailOtp"
+                >Resend OTP</v-btn
+              >
+            </p>
+            <p>
+              Incorrect email address? 
               <v-btn
                 class="purple-text text-capitalize text-body-1 pa-0"
                 variant="text"
-                @click="returnToLogin"
-                >Return to Login</v-btn
+                @click="returnToSignup"
+                >Return to Sign Up form</v-btn
               >
             </p>
           </div>
@@ -107,13 +138,22 @@ const error = ref(null);
 const loading = ref(true);
 const config = useRuntimeConfig();
 
-const emit = defineEmits(["submit"]);
+const otp = ref("");
+const otpLength = ref(6);
+const totalTime = ref(120);
+const remainingTime = ref(120);
+const timerRunning = ref(false);
+const timerInterval = ref(null);
 
-const title = ref("Enter the verification code sent to your email");
+const emit = defineEmits(["submit", "sendEmailOtpEvent"]);
+
+const title = ref("Enter Verification Code");
 const item = ref({ items: [] });
 const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
+
+const emailLocal = user?.email || localStorage.getItem('email');
 
 const submit = async () => {
   emit("submit");
@@ -155,9 +195,67 @@ const submit = async () => {
   }
 };
 
+const formatTime = computed(() => {
+  const minutes = Math.floor(remainingTime.value / 60);
+  const seconds = remainingTime.value % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
+});
+
+const startTimer = () => {
+  if (!timerRunning.value) {
+    timerRunning.value = true;
+    timerInterval.value = setInterval(updateTimer, 1000);
+  }
+};
+
+const updateTimer = () => {
+  if (remainingTime.value > 0) {
+    remainingTime.value--;
+  } else {
+    timerRunning.value = false;
+    clearInterval(timerInterval.value);
+  }
+};
+
+const resendEmailOtp = async () => {
+  console.log('resendEmailOtp');
+  console.log(user);
+  console.log(userStore.getUser());
+
+  remainingTime.value = totalTime.value;
+  await emit("sendEmailOtpEvent");
+  startTimer();
+  otp.value = "";
+  
+  let email = user.email;
+  //Run API
+  try {
+    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-login/${email}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    data.value = await response.json();
+  } catch (err) {
+    error.value = 'Failed to fetch data';
+  }
+};
+
 const returnToLogin = () => {
   navigateTo("/auth/login");
 };
+const returnToSignup = () => {
+  navigateTo("/auth/signup");
+};
+
 </script>
 <style>
 .custom-icon > .v-overlay__content {
