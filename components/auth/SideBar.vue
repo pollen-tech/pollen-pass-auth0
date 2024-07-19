@@ -9,7 +9,7 @@
       width="70px"
     />
     <p class="font-weight-bold mt-8 mb-8 text-white" style="font-size: 24px">
-      {{ title }}
+      Your passport to<br/> More Transparency,<br/> More Optionality,<br/> More Sustainability
     </p>
     <ul class="pl-4 pt-4" style="font-size: 18px; color: white">
       <li v-for="text in context" class="pb-4">
@@ -32,7 +32,8 @@ const props = defineProps({
     type: String,
     required: false,
     default:
-      "Your passport to millions of overstock or near-expiry items - at your fingertips!",
+      "<p>Your passport to<br/> More Transparency,<br/> More Optionality,<br/> More Sustainability</p>"
+      
   },
   context: {
     type: Array,

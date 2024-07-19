@@ -179,3 +179,31 @@ body {
 }
 
 // end of toolbar
+
+.custom-text-field .v-input__control .v-field__field,
+.custom-text-field .v-input__control .v-field__field input {
+  max-height: 40px !important;
+  min-height: 40px !important;
+}
+
+.custom-text-field {
+  margin-top: 5px;
+}
+
+.custom-button {
+  height: 40px !important;
+  font-size: 16px !important;
+  padding: 8px 20px;
+  border-radius: 6px !important;
+
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.link {
+  color: #8431E7 !important;
+  text-decoration: none;
+}
