@@ -3,14 +3,14 @@
     <v-row no-gutters>
       <v-col cols="12" md="12" class="text-left">
         <v-sheet style="display: flex !important;
-    width: 100%;
-    justify-content: space-between;">
+                  width: 100%;
+                  justify-content: space-between;">
           <v-btn
             variant="text"
             prepend-icon="mdi-chevron-left"
             style="color: #6b7280"
             class="text-capitalize"
-            @click="$emit('previousPage')"
+            @click="returnToSignup()"
             alt="Back"
           >
             <template v-slot:prepend>
@@ -23,7 +23,6 @@
             prepend-icon="mdi-account-circle-outline"
             style="color: #6b7280; text-transform: none !important;"
             class="text-capitalize"
-            @click="$emit('previousPage')"
             alt="Back"
           >
             <template v-slot:prepend>
@@ -86,7 +85,7 @@
             </p>
           </div>
           <v-btn
-            class="my-4 me-auto text-capitalize rounded-lg"
+            class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
             :loading="isLoading"
