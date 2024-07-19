@@ -10,14 +10,16 @@ interface User {
 	countryCode: string;
 }
 
-export const useUserStore = defineStore({
-	id: 'shared',
-	state: (): { user: User | null } => ({
-		user: null,
-	}),
+export const useUserStore = defineStore('user', {
+	state: (): { user: User | null } => {
+		return {
+			user: null,
+		};
+	},
 	actions: {
 		setUser(user: User) {
 			this.user = { ...this.user, ...user };
+			localStorage.setItem('email', user.email);
 		},
 		getUser(): User | null {
 			return this.user;

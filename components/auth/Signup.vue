@@ -8,12 +8,12 @@
     >
       <div class="text-caption justify-center mb-12 d-flex">
         <img
-          src="~/assets/images/pollen-save.svg"
+          src="~/assets/images/pollen.svg"
           class="mx-4"
           style="width: 50px"
         />
         <div>
-          <p class="font-weight-bold">
+          <p class="font-weight-bold" style="font-size: 14px;">
             {{ notification.title }}
           </p>
           <p>
@@ -21,7 +21,7 @@
           </p>
         </div>
       </div>
-      <h3>{{ title }}</h3>
+      <h3 style="font-size: 20px;">{{ title }}</h3>
 
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -31,43 +31,47 @@
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
-              >First Name <span class="red--text">*</span>
+              >First Name<span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.firstName"
               variant="outlined"
-              placeholder="Enter First Name"
+              placeholder="Eg. Kevin"
               :rules="required"
+              class="custom-text-field"
+              autocomplete="given-name"
             ></v-text-field>
           </div>
 
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
-              >Last Name <span class="red--text">*</span>
+              >Last Name<span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.lastName"
               variant="outlined"
-              placeholder="Enter Last Name"
+              placeholder="Eg. King"
               :rules="required"
+              class="custom-text-field"
+              autocomplete="family-name"
             ></v-text-field>
           </div>
 
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium"
-              >Email <span class="red--text">*</span>
+              >Email<span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.email"
               variant="outlined"
-              placeholder="Enter Email"
               :rules="required"
+              class="custom-text-field"
             ></v-text-field>
           </div>
-          <v-checkbox
+          <!--<v-checkbox
             v-model="checkAcceptTerms"
             hide-details
             @change="checkTerms()"
@@ -86,9 +90,9 @@
                 </a>
               </div>
             </template>
-          </v-checkbox>
+          </v-checkbox>-->
           <v-btn
-            class="my-4 me-auto text-capitalize rounded-lg"
+            class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
             :loading="isLoading"
@@ -152,10 +156,10 @@ const { countries } = storeToRefs(countryStore);
 
 const sellerStore = useSellerStore();
 
-const title = ref("Sign up here");
+const title = ref("Enter your information");
 const notification = ref({
-  title: "Get 24/7 Clearance Sales On 100% Authentic Items with Pollen Pass",
-  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
+  title: "How to Start Selling with Pollen's Liquidation Management System",
+  desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
 });
 const item = ref({ items: [] });
 const rules = reactive({
@@ -173,7 +177,7 @@ const isLoading = ref(false);
 const showDialog = ref(false);
 const validateCompanyName = ref(0);
 const selectedItem = ref(null);
-const checkAcceptTerms = ref(false);
+//const checkAcceptTerms = ref(false);
 
 const fetchCity = async (val) => {
   items.value.city = null;
@@ -196,11 +200,7 @@ const submit = async () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        //"client_id": config.public.AUTH0_CLIENT_ID,
-        //"client_secret": config.public.AUTH0_CLIENT_SECRET,
-        //"connection": "email",
-        //"email": item.value.email,
-        //"send": "code"
+       
       })
     });
 
@@ -221,7 +221,7 @@ const onValidateCompanyName = () => {
   validateCompanyName.value = 2;
 };
 
-const checkTerms = () => {};
+//const checkTerms = () => {};
 
 onMounted(async () => {
   countryStore.getCountries();
