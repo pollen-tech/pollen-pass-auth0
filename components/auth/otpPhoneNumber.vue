@@ -11,7 +11,7 @@
         <div class="my-2">
           <div class="d-flex">
             <label class="font-weight-medium text-body-2"
-              >Phone Number <span class="red--text">*</span>
+              >Enter your phone number for verification<span class="red--text">*</span>
             </label>
             <v-spacer />
             <v-chip
@@ -46,6 +46,7 @@
             @validate="phoneObject"
             @input="onPhoneInput"
             @country-changed="onCountryChange"
+            style="border-radius: 6px !important;"
           />
 
           <p v-if="!phoneValid" class="red--text text-caption mt-2">
@@ -55,9 +56,9 @@
 
         <v-btn
           v-if="!isPhoneSave"
-          color="deep-purple-accent-4"
+          color="#8431E7"
           block
-          class="my-4 text-capitalize"
+          class="my-4 text-capitalize custom-button"
           :disabled="!phoneValid"
           @click="savePhone"
           >Confirm
@@ -90,9 +91,9 @@
             </v-radio>
           </v-radio-group>
           <v-btn
-            color="deep-purple-accent-4"
+            color="#8431E7"
             block
-            class="my-4 text-capitalize"
+            class="my-4 text-capitalize custom-button"
             :disabled="otpType === null"
             @click="sendOtpRequest"
             >Send OTP

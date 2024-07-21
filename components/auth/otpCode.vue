@@ -46,8 +46,8 @@
         </div>
         <v-btn
           block
-          class="my-4 me-auto"
-          color="deep-purple-accent-4 text-capitalize"
+          class="my-4 me-auto custom-button text-capitalize"
+          color="#8431E7"
           :disabled="otp.length < otpLength || isOtpLoading"
           @click="sendPhoneNumber"
           >Continue</v-btn
@@ -55,8 +55,8 @@
         <v-btn
           block
           variant="outlined"
-          class="my-4 me-auto"
-          color="deep-purple-accent-4 text-capitalize"
+          class="my-4 me-auto text-none"
+          color="#374151"
           @click="goToPhoneNumberPage"
           >Verify OTP another way</v-btn
         >

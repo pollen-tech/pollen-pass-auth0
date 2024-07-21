@@ -13,8 +13,10 @@
       <v-col cols="12" md="8">
         <div class="ma-8">
           <v-row no-gutters>
-            <v-col cols="12" md="6" class="text-left">
-              <v-sheet>
+            <v-col cols="12" md="12" class="text-left">
+              <v-sheet style="display: flex !important;
+                  width: 100%;
+                  justify-content: space-between;">
                 <v-btn
                   variant="text"
                   prepend-icon="mdi-chevron-left"
@@ -27,6 +29,18 @@
                     <v-icon color="#6B7280"></v-icon>
                   </template>
                   Previous
+                </v-btn>
+                <v-btn
+                  variant="text"
+                  prepend-icon="mdi-account-circle-outline"
+                  style="color: #6b7280; text-transform: none !important;"
+                  class="text-capitalize"
+                  alt="Back"
+                >
+                  <template v-slot:prepend>
+                    <v-icon color="#6B7280"></v-icon>
+                  </template>
+                  {{ this.emailLocal}}
                 </v-btn>
               </v-sheet>
             </v-col>
@@ -75,7 +89,10 @@ export default {
     const error = ref(null);
     const loading = ref(true);
 
-    return { commonStore, userStore, config, data, error, loading };
+    const user = userStore.getUser();
+    const emailLocal = user?.email || localStorage.getItem('email');
+
+    return { commonStore, userStore, config, data, error, loading, emailLocal };
   },
   data: () => ({
     config: null,
@@ -110,6 +127,8 @@ export default {
     console.log("runtime", this.config.public);
     console.log(this.id);
     this.isPhoneExist = false;
+  
+
 
     if (this.id) {
       const userData = await this.getUserInfo(this.id);
@@ -190,6 +209,7 @@ export default {
       this.isPhoneExist = false;
       console.log(this.user);
       this.isOtpPage = false;
+      navigateTo("/auth/verification");
     },
     async getUserInfo(referenceId) {
       const url = `${this.config.public.ppBackendUrl}/user/reference/${referenceId}`;
