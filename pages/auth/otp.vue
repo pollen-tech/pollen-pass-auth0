@@ -145,31 +145,7 @@ export default {
       this.savePhone(param);
     },
     async savePhone(param) {
-      //const url = `${this.config.public.API_URL}/otp/send`;
-      //const body = {
-      //  phoneNumber: param,
-      //};
-      //try {
-      //  const req = await api(url, "PATCH", body);
-      //  if (!req.statusCode) {
-      //    if (req.isVerified) {
-      //      this.isOtpValid = false;
-      //      this.isOtpLoading = false;
-      //      setTimeout(() => {
-      //        navigateTo("/auth/success");
-      //      }, 2000);
-      //    } else {
-      //      this.isPhoneSave = true;
-      //      this.isOtpLoading = false;
-      //      return;
-      //    }
-      //  } else {
-      //    this.getErrorMessage(req);
-      //  }
-      //} catch (error) {
-      //  console.error("Something went wrong:", error);
-      //  this.isOtpLoading = false;
-      //}
+      
     },
     async verifyOtp(param) {
       this.otp = param;
@@ -237,7 +213,8 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          mode: 'cors'
         });
 
         if (!response.ok) {
