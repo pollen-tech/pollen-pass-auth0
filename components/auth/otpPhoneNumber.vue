@@ -5,9 +5,6 @@
         {{ isPhoneSave ? notificationTitle2 : notificationTitle1 }}
       </h3>
       <v-form ref="form" class="w-50">
-        <!--<p class="font-weight-bold text-body-1 text-center mb-6">
-          Enter your Information
-        </p>-->
         <div class="my-2">
           <div class="d-flex">
             <label class="font-weight-medium text-body-2"
@@ -99,22 +96,6 @@
             >Send OTP
           </v-btn>
         </div>
-        <!-- <v-btn
-          color="deep-purple-accent-4"
-          block
-          class="my-4 text-capitalize"
-          :disabled="!phoneValid"
-          @click="sendOtpViaSms"
-          >Send OTP via SMS</v-btn
-        >
-        <v-btn
-          variant="outlined"
-          block
-          class="my-4 text-capitalize"
-          :disabled="!phoneValid"
-          @click="sendOtpViaWhatsApp"
-          >Send OTP via Whatsapp</v-btn
-        > -->
         <p class="text-center grey--text">
           <v-icon class="mx-1">mdi-phone-outline</v-icon>Need Assistance?
           <a
@@ -154,10 +135,7 @@ export default {
     },
 
   },
-  //setup(props) {
-  //  const userStore = useUserStore();
-  //  return { userStore };
-  //},
+  
   data() {
     return {
       notificationTitle1: "Phone number Verification",

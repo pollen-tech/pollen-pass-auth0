@@ -1,6 +1,6 @@
 <template>
   <v-layout class="rounded rounded-md">
-    <v-app-bar
+    <!--<v-app-bar
       fixed
       app
       :class="$vuetify.display.mobile ? 'py-2' : 'pt-1'"
@@ -120,7 +120,7 @@
           </h6>
         </div>
       </v-skeleton-loader>
-    </v-app-bar>
+    </v-app-bar>-->
     <v-navigation-drawer
       v-if="isAuthenticated && showSideNav"
       v-model="drawer"

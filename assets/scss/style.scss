@@ -96,13 +96,6 @@ body {
   color: #000000;
 }
 
-.side-container {
-  background-image: url("@/assets/images/bg_auth.webp");
-  background-position: center;
-  background-size: cover;
-  padding: 4em;
-}
-
 .bg-signup-container {
   background-image: url("@/assets/images/bg-signup-success.webp");
   background-position: center;
@@ -119,11 +112,11 @@ body {
   }
 }
 
-.signup-bg {
-  background-image: url("@/assets/image/signup-bg.png");
-  background-position: center;
-  background-size: cover;
-}
+//.signup-bg {
+//  background-image: url("@/assets/image/signup-bg.png");
+//  background-position: center;
+//  background-size: cover;
+//}
 
 .side-container-pollen-pass {
   background-image: url("~/assets/images/bg_auth_pollen_pass.webp");
@@ -133,7 +126,7 @@ body {
 }
 
 .onboarding-header {
-  background-image: url("@/assets/image/onboarding-header.webp");
+  background-image: url("@/assets/images/onboarding-header.webp");
   background-position: center;
   background-size: cover;
 }

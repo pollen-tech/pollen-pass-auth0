@@ -159,7 +159,7 @@ const submit = async () => {
   console.log(user);
   let email = user.email;
   let otp = item.value.emailOTPCode;
-  let channel_code = 'CH_POLLEN_PASS';
+  let channel_code = 'POLLEN_PASS';
 
   try {
     console.log('params: ',email, otp, channel_code);

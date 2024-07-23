@@ -12,7 +12,7 @@
       Your passport to<br/> More Transparency,<br/> More Optionality,<br/> More Sustainability
     </p>
     <ul class="pl-4 pt-4" style="font-size: 18px; color: white">
-      <li v-for="text in context" class="pb-4">
+      <li v-for="text in context" v-bind:key="text" class="pb-4">
         {{ text }}
       </li>
     </ul>

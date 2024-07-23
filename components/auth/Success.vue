@@ -51,15 +51,19 @@
 <script>
 import { mapState } from "pinia";
 import { api } from "~/services/api";
+import { useUserStore } from '@/store/user';
+import moment from 'moment';
+
+
 export default {
   data: () => ({
     componentTitle: "Welcome to Pollen Pass!",
     user: {
-      name: "John Doe Solivan",
-      email: "johndoe&company.com",
-      phonenumber: "+1 1234567890",
-      memberid: "1029938",
-      createdate: " 01/12/2024",
+      name: "",
+      email: "",
+      phonenumber: "",
+      memberid: "",
+      createdate: "",
     },
     config: null,
     clientId: null,
@@ -73,35 +77,71 @@ export default {
   },
   async mounted() {
     this.config = useRuntimeConfig();
-    const userData = await this.getUserInfo();
-    const originalDate = new Date(userData.createdAt);
+    const userStore = useUserStore();
+    console.log(userStore)
+    console.log(userStore.getUser())
+    const userId = userStore.getUser()?.user_id;
+    await this.fetchUserInfo(userId);
 
-    const formattedDate = `${(originalDate.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}/
-                            ${originalDate
-                              .getDate()
-                              .toString()
-                              .padStart(2, "0")}/
-                            ${originalDate.getFullYear()}`;
-    this.user = {
-      name: `${userData.firstName} ${userData.lastName}`,
-      email: userData.email,
-      phonenumber: userData.phone,
-      memberid: userData.id,
-      createdate: formattedDate,
-    };
-    const savedKeycloak = localStorage.getItem("keycloak") || this.keycloak;
-    const clientId =
-      JSON.parse(savedKeycloak)?.clientId || savedKeycloak?.clientId;
-    this.clientId = clientId;
+    //const userData = await this.getUserInfo();
+    //const originalDate = new Date(userData.createdAt);
+
+    //const formattedDate = `${(originalDate.getMonth() + 1)
+    //  .toString()
+    //  .padStart(2, "0")}/
+    //    ${originalDate
+    //      .getDate()
+    //      .toString()
+    //      .padStart(2, "0")}/
+    //    ${originalDate.getFullYear()}`;
+    //this.user = {
+    //  name: `${userData.firstName} ${userData.lastName}`,
+    //  email: userData.email,
+    //  phonenumber: userData.phone,
+    //  memberid: userData.id,
+    //  createdate: formattedDate,
+    //};
+
+    //const savedKeycloak = localStorage.getItem("keycloak") || this.keycloak;
+    //const clientId =
+    //  JSON.parse(savedKeycloak)?.clientId || savedKeycloak?.clientId;
+    //this.clientId = clientId;
   },
   methods: {
-    async getUserInfo() {
-      const url = `${this.config.public.backendUrl}/user/reference/${this.id}`;
-      const keyCloakData = await api(url);
+    //async getUserInfo() {
+    //  const url = `${this.config.public.backendUrl}/user/reference/${this.id}`;
+    //  const keyCloakData = await api(url);
 
-      return keyCloakData;
+    //  return keyCloakData;
+    //},
+    async fetchUserInfo(userId) {
+      try {
+        const response = await fetch(`${this.config.public.API_URL}/users/pollen-pass-by-user-id/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const userDataJson = await response.json();
+        const userData = userDataJson.data;
+
+        console.log(userData);
+        //const originalDate = new Date(userData.createdAt);
+        const formattedDate = moment(userData.createdAt).format('DD/MM/YYYY');
+        this.user = {
+          name: `${userData.first_name} ${userData.last_name}`,
+          email: userData.email,
+          phonenumber: `+${userData.country_code} ${userData.phone_no}`,
+          memberid: userData.user_id,
+          createdate: formattedDate,
+        };
+        console.log('user: ', this.user);
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
     },
     redirect() {
       if (this.clientId === "lms") {
