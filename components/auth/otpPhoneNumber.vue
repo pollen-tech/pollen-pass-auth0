@@ -31,6 +31,7 @@
             :disabledFormatting="true"
             :validCharactersOnly="true"
             :class="phoneValid ? 'phoneStyle pa-2' : 'hasError pa-2'"
+            :autoFormat="false" 
             :dropdownOptions="{
               showDialCodeInSelection: true,
               showSearchBox: true,
@@ -39,6 +40,7 @@
             :inputOptions="{
               showFlags: true,
               autocomplete: false,
+              showDialCode: false,
             }"
             @validate="phoneObject"
             @input="onPhoneInput"
@@ -133,6 +135,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    phoneTest: {
+      type: String,
+      readonly: false,
+      default: "",
+    },
 
   },
   
@@ -151,7 +158,7 @@ export default {
   methods: {
     phoneObject(object) {
       this.phoneValid = object.valid;
-      this.phoneLocal = object?.number;
+      this.phoneLocal = object?.nationalNumber;
     },
     sendOtpViaSms() {
       // this.$emit("otpEvent", this.phoneLocal);
@@ -175,32 +182,19 @@ export default {
       }
     },
     savePhone() {
-    const userStore = useUserStore();
-    const user = userStore.getUser();
+      const userStore = useUserStore();
+      const user = userStore.getUser();
 
-      //console.log(this.isPhoneSave);
       this.$emit("otpEvent", this.phoneLocal);
       this.$emit('update:isPhoneSave', true);
-      console.log(this.phoneLocal)
       const cleanedPhoneNumber = this.phoneLocal.replace(/\s+/g, '');
-      console.log(cleanedPhoneNumber)
-
-
-      console.log(userStore.getUser());
       userStore.setUser({phoneNumber: cleanedPhoneNumber, countryCode: this.countryCode});
-      console.log(userStore.getUser());
-
-
-      //user.countryCode = this.phoneLocal;
-      //console.log(this.isPhoneSave);
     },
-    onPhoneInput(phone, country) {
-      console.log('Phone countryCode:', this.countryCode);
-      console.log('Phone number:', this.phoneLocal);
+    onPhoneInput(value) {
+      //console.log('Phone value:', {value});
     },
     onCountryChange(country) {
       this.countryCode = country.dialCode;
-      console.log(this.countryCode);
     },
 
   },
