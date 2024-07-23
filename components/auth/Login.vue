@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="d-flex flex-column align-center mx-16 "
+      class="d-flex flex-column align-center mx-16"
       :style="{
         'margin-top': $vuetify.display.mobile ? '20px' : '10%',
       }"
@@ -13,7 +13,7 @@
           style="width: 50px"
         />
         <div>
-          <p class="font-weight-bold" style="font-size: 14px;">
+          <p class="font-weight-bold" style="font-size: 14px">
             {{ notification.title }}
           </p>
           <p>
@@ -21,8 +21,8 @@
           </p>
         </div>
       </div>
-      <h3 style="color: #111827; font-size: 20px;">{{ title }}</h3>
-      <p style="color: #111827; font-size: 14px;">{{ desc }}</p>
+      <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
+      <p style="color: #111827; font-size: 14px">{{ desc }}</p>
 
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -31,14 +31,13 @@
       >
         <v-form ref="form">
           <div class="my-4 text-start flex-1-0">
-            <label class="font-weight-medium"
-            style="font-size: 14px;"
+            <label class="font-weight-medium" style="font-size: 14px"
               >Enter Email Address
               <!--<span class="red--text">*</span>-->
             </label>
 
             <v-text-field
-              v-model="item.email"
+              v-model="email"
               variant="outlined"
               placeholder="Enter valid email address"
               :rules="required"
@@ -73,7 +72,10 @@
             @click="submit"
             >Sign in</v-btn
           >
-          <p class="text-center" style="color: #111827; font-size: 14px;">Want to access Pollen LMS? <a href='/auth/signup' class="link">Sign Up with Pollen Pass</a></p>
+          <p class="text-center" style="color: #111827; font-size: 14px">
+            Want to access Pollen LMS?
+            <a href="/auth/signup" class="link">Sign Up with Pollen Pass</a>
+          </p>
         </v-form>
       </v-card>
 
@@ -120,13 +122,15 @@ const emit = defineEmits(["submit"]);
 
 const title = ref("Login");
 const desc = ref("Login to your Pollen Pass account");
-const SignupDesc = ref("Want to access Pollen LMS? <a href='/auth/signup'>Sign Up with Pollen Pass</a>");
+const SignupDesc = ref(
+  "Want to access Pollen LMS? <a href='/auth/signup'>Sign Up with Pollen Pass</a>"
+);
 
 const notification = ref({
   title: "How to Start Selling with Pollen's Liquidation Management System",
   desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
 });
-const item = ref({ items: [] });
+const email = ref("");
 //const rules = reactive({
 //  required: (value) => !!value || "Required.",
 //  min: (v) => v.length >= 8 || "Min 8 characters",
@@ -152,8 +156,7 @@ const showDialog = ref(false);
 //};
 
 const submit = () => {
-  emit("submit");
-  console.log('item', item.value);
+  emit("submit", email.value);
 };
 
 //const onValidateCompanyName = () => {
@@ -205,7 +208,7 @@ onMounted(async () => {
   line-height: 24px;
 }
 .link {
-  color: #8431E7 !important;
+  color: #8431e7 !important;
   text-decoration: none;
 }
 </style>

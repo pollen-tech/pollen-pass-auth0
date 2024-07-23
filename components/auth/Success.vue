@@ -49,11 +49,9 @@
 </template>
 
 <script>
-import { mapState } from "pinia";
-import { api } from "~/services/api";
-import { useUserStore } from '@/store/user';
-import moment from 'moment';
-
+import { useUserStore } from "@/store/user";
+import { useAuth } from "@/composables/auth0";
+import moment from "moment";
 
 export default {
   data: () => ({
@@ -77,10 +75,11 @@ export default {
   },
   async mounted() {
     this.config = useRuntimeConfig();
+    const auth = useAuth();
     const userStore = useUserStore();
-    console.log(userStore)
-    console.log(userStore.getUser())
-    const userId = userStore.getUser()?.user_id;
+    console.log(userStore);
+    console.log(userStore.getUser());
+    const userId = userStore.getUser()?.user_id || auth.get_user_id();
     await this.fetchUserInfo(userId);
 
     //const userData = await this.getUserInfo();
@@ -116,39 +115,52 @@ export default {
     //},
     async fetchUserInfo(userId) {
       try {
-        const response = await fetch(`${this.config.public.API_URL}/users/pollen-pass-by-user-id/${userId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
+        const response = await fetch(
+          `${this.config.public.API_URL}/users/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-        });
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const userDataJson = await response.json();
-        const userData = userDataJson.data;
-
+        const userData = userDataJson;
         console.log(userData);
         //const originalDate = new Date(userData.createdAt);
-        const formattedDate = moment(userData.createdAt).format('DD/MM/YYYY');
+        const formattedDate = moment(userData.created_at).format("DD/MM/YYYY");
         this.user = {
           name: `${userData.first_name} ${userData.last_name}`,
           email: userData.email,
           phonenumber: `+${userData.country_code} ${userData.phone_no}`,
-          memberid: userData.user_id,
+          memberid: userData.id,
           createdate: formattedDate,
         };
-        console.log('user: ', this.user);
+        console.log("user: ", this.user);
       } catch (error) {
-        console.error('Failed to fetch user info:', error);
+        console.error("Failed to fetch user info:", error);
       }
     },
     redirect() {
-      if (this.clientId === "lms") {
-        navigateTo(this.config.public.pollenLmsUrl, { external: true });
+      const runtimeConfig = useRuntimeConfig();
+      const auth = useAuth();
+      const channel = auth.get_channel();
+      let redirect_url = "";
+
+      if (channel === "CH_POLLEN_DIRECT") {
+        redirect_url = runtimeConfig.public.pollenDirectUrl;
       } else {
-        navigateTo(this.config.public.pollenDirectUrl, { external: true });
+        redirect_url = runtimeConfig.public.pollenLmsUrl;
       }
+
+      const url = new URL(redirect_url);
+      url.searchParams.append("user_id", auth.get_user_id());
+      url.searchParams.append("access_token", auth.get_access_token());
+      url.searchParams.append("expires_at", auth.get_expire_at());
+      navigateTo(url.toString(), { external: true });
     },
   },
 };

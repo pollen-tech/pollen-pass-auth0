@@ -13,7 +13,7 @@
           style="width: 50px"
         />
         <div>
-          <p class="font-weight-bold" style="font-size: 14px;">
+          <p class="font-weight-bold" style="font-size: 14px">
             {{ notification.title }}
           </p>
           <p>
@@ -21,7 +21,7 @@
           </p>
         </div>
       </div>
-      <h3 style="font-size: 20px;">{{ title }}</h3>
+      <h3 style="font-size: 20px">{{ title }}</h3>
 
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -71,7 +71,7 @@
               class="custom-text-field"
             ></v-text-field>
           </div>
-          
+
           <v-btn
             class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
@@ -80,7 +80,6 @@
             @click="onValidateExistEmail()"
             >Continue</v-btn
           >
-          
         </v-form>
       </v-card>
       <SmallDialog />
@@ -118,17 +117,17 @@
 import { ref, reactive, onMounted } from "vue";
 import { useSellerStore } from "@/store/seller";
 import { useCountryStore } from "@/store/country";
-import { useUserStore } from '@/store/user';
-import { useRuntimeConfig } from '#app';
-import SmallDialog from '@/components/common/SmallDialog.vue';
-import { useDialogStore } from '@/store/dialog';
+import { useUserStore } from "@/store/user";
+import { useRuntimeConfig } from "#app";
+import SmallDialog from "@/components/common/SmallDialog.vue";
+import { useDialogStore } from "@/store/dialog";
 
 const dialogStore = useDialogStore();
 const userStore = useUserStore();
 
-let email = '';
-let firstName = '';
-let lastName = '';
+let email = "";
+let firstName = "";
+let lastName = "";
 
 const data = ref(null);
 const error = ref(null);
@@ -166,80 +165,87 @@ const selectedItem = ref(null);
 const smallDialog = ref(false);
 
 const showDialog = () => {
-  console.log('showDialog');
-  dialogStore.showDialog('Email address already exist', 'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>');
+  console.log("showDialog");
+  dialogStore.showDialog(
+    "Email address already exist",
+    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>'
+  );
 };
 
 const onValidateExistEmail = async () => {
   let email = item.value.email;
-  console.log('onValidateExistEmail -', email);
+  console.log("onValidateExistEmail -", email);
 
   try {
-    const response = await fetch(`${config.public.API_URL}/users/pollen-pass-by-email/${email}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    const response = await fetch(
+      `${config.public.API_URL}/users/pollen-pass-by-email/${email}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
     data.value = await response.json();
 
     console.log(data.value.status_code);
 
-    if(data.value.status_code === 'OK') {
-      console.log('showDialog');
+    if (data.value.status_code === "OK") {
+      console.log("showDialog");
       showDialog();
     } else {
-      console.log('submit');
+      console.log("submit");
       submit();
     }
   } catch (err) {
-    error.value = 'Failed to fetch data';
+    error.value = "Failed to fetch data";
     console.log(err);
   }
 };
 
 const submit = async () => {
   emit("submit", item.value);
-  const user = { email: item.value.email, firstName:item.value.firstName, lastName: item.value.lastName, channelCode: 'POLLEN_PASS' };
+  const user = {
+    email: item.value.email,
+    firstName: item.value.firstName,
+    lastName: item.value.lastName,
+    channelCode: "POLLEN_PASS",
+  };
   userStore.setUser(user);
   console.log(user);
   let email = item.value.email;
-  
+
   try {
-    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-login/${email}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    const response = await fetch(
+      `${config.public.API_URL}/auth0/password-less-email-login/${email}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
     data.value = await response.json();
 
-    if(data.value.status_code === 'LOGIN_ERROR') {
-      throw new Error('LOGIN ERROR');
+    if (data.value.status_code === "LOGIN_ERROR") {
+      throw new Error("LOGIN ERROR");
     }
     navigateTo("/auth/verification");
-
   } catch (err) {
-    error.value = 'Failed to fetch data';
+    error.value = "Failed to fetch data";
     console.log(err);
   }
 };
 
-
-
-
-
-onMounted(async () => {
-  
-});
+onMounted(async () => {});
 </script>
 <style>
 .custom-icon > .v-overlay__content {

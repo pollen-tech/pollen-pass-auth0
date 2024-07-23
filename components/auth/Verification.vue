@@ -2,9 +2,13 @@
   <div>
     <v-row no-gutters>
       <v-col cols="12" md="12" class="text-left">
-        <v-sheet style="display: flex !important;
-                  width: 100%;
-                  justify-content: space-between;">
+        <v-sheet
+          style="
+            display: flex !important;
+            width: 100%;
+            justify-content: space-between;
+          "
+        >
           <v-btn
             variant="text"
             prepend-icon="mdi-chevron-left"
@@ -21,14 +25,14 @@
           <v-btn
             variant="text"
             prepend-icon="mdi-account-circle-outline"
-            style="color: #6b7280; text-transform: none !important;"
+            style="color: #6b7280; text-transform: none !important"
             class="text-capitalize"
             alt="Back"
           >
             <template v-slot:prepend>
               <v-icon color="#6B7280"></v-icon>
             </template>
-            {{ emailLocal}}
+            {{ emailLocal }}
           </v-btn>
         </v-sheet>
       </v-col>
@@ -40,12 +44,14 @@
       }"
     >
       <h3>{{ title }}</h3>
-      <p class="text-center my-6" style="color: #6B7280;">We have sent a 6-digit code to:</p>
+      <p class="text-center my-6" style="color: #6b7280">
+        We have sent a 6-digit code to:
+      </p>
       <div class="my-2">
-          <p class="font-weight-bold text-center mb-4">
-            {{ user?.email }}
-          </p>
-        </div>
+        <p class="font-weight-bold text-center mb-4">
+          {{ user?.email }}
+        </p>
+      </div>
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
         elevation="0"
@@ -75,7 +81,7 @@
               >
             </p>
             <p>
-              Incorrect email address? 
+              Incorrect email address?
               <v-btn
                 class="purple-text text-capitalize text-body-1 pa-0"
                 variant="text"
@@ -126,9 +132,11 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRuntimeConfig } from '#app';
-import { useUserStore } from '@/store/user';
+import { useRuntimeConfig } from "#app";
+import { useUserStore } from "@/store/user";
+import { useAuth } from "@/composables/auth0";
 
+const auth = useAuth();
 const userStore = useUserStore();
 const user = userStore.getUser();
 
@@ -152,45 +160,51 @@ const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
 
-const emailLocal = user?.email || localStorage.getItem('email');
+const emailLocal = user?.email || localStorage.getItem("email");
 
 const submit = async () => {
   emit("submit");
   console.log(user);
   let email = user.email;
   let otp = item.value.emailOTPCode;
-  let channel_code = 'POLLEN_PASS';
+  let channel_code = user.channelCode;
 
   try {
-    console.log('params: ',email, otp, channel_code);
-    console.log(`${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}`);
-    console.log(JSON.stringify({
-        "email": email,
-        "code": otp,
-        "channel_code": channel_code
-      }));
-    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&channel_code=${channel_code}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        
+    console.log("params: ", email, otp, channel_code);
+    console.log(
+      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}`
+    );
+    console.log(
+      JSON.stringify({
+        email: email,
+        code: otp,
+        channel_code: channel_code,
       })
-    });
+    );
+    const response = await fetch(
+      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&channel_code=${channel_code}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
     data.value = await response.json();
-    console.log(data.value);
-    console.log('data.value.user_id: ', data.value.user_id);
-    userStore.setUser({user_id: data.value.user_id});
-    console.log('userStore.getUser(): ', userStore.getUser());
-    navigateTo("/auth/otp");
 
+    auth.handleAuth0Response(data.value);
+
+    console.log("data.value.user_id: ", data.value.user_id);
+    userStore.setUser({ user_id: data.value.user_id });
+    console.log("userStore.getUser(): ", userStore.getUser());
+    navigateTo("/auth/otp");
   } catch (err) {
-    error.value = 'Failed to fetch data';
+    error.value = "Failed to fetch data";
   }
 };
 
@@ -220,7 +234,7 @@ const updateTimer = () => {
 };
 
 const resendEmailOtp = async () => {
-  console.log('resendEmailOtp');
+  console.log("resendEmailOtp");
   console.log(user);
   console.log(userStore.getUser());
 
@@ -228,23 +242,26 @@ const resendEmailOtp = async () => {
   await emit("sendEmailOtpEvent");
   startTimer();
   otp.value = "";
-  
+
   let email = user.email;
   //Run API
   try {
-    const response = await fetch(`${config.public.API_URL}/auth0/password-less-email-login/${email}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `${config.public.API_URL}/auth0/password-less-email-login/${email}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
     data.value = await response.json();
   } catch (err) {
-    error.value = 'Failed to fetch data';
+    error.value = "Failed to fetch data";
   }
 };
 
@@ -252,9 +269,15 @@ const returnToLogin = () => {
   navigateTo("/auth/login");
 };
 const returnToSignup = () => {
-  navigateTo("/auth/signup");
+  navigateTo("/auth/login");
 };
 
+const get_channel = () => {
+  if (typeof window !== "undefined") {
+    const channel = localStorage.getItem("channel");
+    return channel;
+  }
+};
 </script>
 <style>
 .custom-icon > .v-overlay__content {

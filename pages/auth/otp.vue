@@ -14,15 +14,19 @@
         <div class="ma-8">
           <v-row no-gutters>
             <v-col cols="12" md="12" class="text-left">
-              <v-sheet style="display: flex !important;
+              <v-sheet
+                style="
+                  display: flex !important;
                   width: 100%;
-                  justify-content: space-between;">
+                  justify-content: space-between;
+                "
+              >
                 <v-btn
                   variant="text"
                   prepend-icon="mdi-chevron-left"
                   style="color: #6b7280"
                   class="text-capitalize"
-                  @click="goToPhoneNumberPage()"
+                  @click="goToPrevious()"
                   alt="Back"
                 >
                   <template v-slot:prepend>
@@ -33,14 +37,14 @@
                 <v-btn
                   variant="text"
                   prepend-icon="mdi-account-circle-outline"
-                  style="color: #6b7280; text-transform: none !important;"
+                  style="color: #6b7280; text-transform: none !important"
                   class="text-capitalize"
                   alt="Back"
                 >
                   <template v-slot:prepend>
                     <v-icon color="#6B7280"></v-icon>
                   </template>
-                  {{ this.emailLocal}}
+                  {{ this.emailLocal }}
                 </v-btn>
               </v-sheet>
             </v-col>
@@ -77,8 +81,7 @@
 <script>
 import { mapState } from "pinia";
 import { useCommonStore } from "~/store/common";
-import { ppApi } from "~/services/api";
-import { useUserStore } from '~/store/user';
+import { useUserStore } from "~/store/user";
 
 export default {
   setup(props) {
@@ -90,7 +93,7 @@ export default {
     const loading = ref(true);
 
     const user = userStore.getUser();
-    const emailLocal = user?.email || localStorage.getItem('email');
+    const emailLocal = user?.email || localStorage.getItem("email");
 
     return { commonStore, userStore, config, data, error, loading, emailLocal };
   },
@@ -127,8 +130,6 @@ export default {
     console.log("runtime", this.config.public);
     console.log(this.id);
     this.isPhoneExist = false;
-  
-
 
     if (this.id) {
       const userData = await this.getUserInfo(this.id);
@@ -144,9 +145,7 @@ export default {
       this.user.phone = param;
       this.savePhone(param);
     },
-    async savePhone(param) {
-      
-    },
+    async savePhone(param) {},
     async verifyOtp(param) {
       this.otp = param;
       this.isOtpValid = true;
@@ -185,7 +184,6 @@ export default {
       this.isPhoneExist = false;
       console.log(this.user);
       this.isOtpPage = false;
-      navigateTo("/auth/verification");
     },
     async getUserInfo(referenceId) {
       const url = `${this.config.public.ppBackendUrl}/user/reference/${referenceId}`;
@@ -197,61 +195,70 @@ export default {
       this.sendOtp(this.otpType);
     },
     async sendOtp(type = "sms") {
-      console.log('sendSMS');
+      console.log("sendSMS");
       this.otpType = type;
       const user = this.userStore.getUser();
 
       const payload = {
         country_code: parseInt(user.countryCode, 10),
         phone_no: parseInt(user.phoneNumber, 10),
-        method: "sms"
+        method: "sms",
       };
-     
+
       try {
         const response = await fetch(`${this.config.public.API_URL}/otp/send`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
-          mode: 'cors'
+          mode: "cors",
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         this.isOtpPage = true;
       } catch (error) {
         console.log(error);
       }
     },
+    getUserId() {
+      if (typeof window !== "undefined") {
+        return localStorage.getItem("user_id");
+      }
+      return null;
+    },
     async verifyOtpEvent(otp) {
       //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
       const user = this.userStore.getUser();
-
+      debugger;
       const payload = {
-        user_id: user.user_id,
+        user_id: user.user_id || getUserId(),
         country_code: parseInt(user.countryCode, 10),
         phone_no: parseInt(user.phoneNumber, 10),
-        otp: otp
+        otp: otp,
       };
       try {
-        const response = await fetch(`${this.config.public.API_URL}/otp/validate-user-otp`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
+        const response = await fetch(
+          `${this.config.public.API_URL}/otp/validate-user-otp`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         //this.data.value = await response.json();
         console.log(this.isOtpPage);
         this.isOtpPage = true;
         console.log(this.isOtpPage);
-        navigateTo( "/auth/success");
+        navigateTo("/auth/success");
       } catch (error) {
         console.log(error);
       }
@@ -279,6 +286,9 @@ export default {
     },
     updateIsPhoneSave(value) {
       this.isPhoneSave = value;
+    },
+    goToPrevious() {
+      navigateTo("/auth/login");
     },
   },
 };
