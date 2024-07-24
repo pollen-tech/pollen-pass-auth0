@@ -4,7 +4,7 @@
       <img
         class="pa-4"
         width="100%"
-        src="../../assets/images/landing-empty.png"
+        src="../../assets/images/landing-empty.jpg"
       />
     </div>
     <div class="text-center text-body-2">
