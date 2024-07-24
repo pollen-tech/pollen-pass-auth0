@@ -135,6 +135,7 @@ import { ref } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
+import { lmsApi } from "@/services/api";
 
 const auth = useAuth();
 const userStore = useUserStore();
@@ -151,6 +152,7 @@ const totalTime = ref(120);
 const remainingTime = ref(120);
 const timerRunning = ref(false);
 const timerInterval = ref(null);
+const channel = auth.get_channel();
 
 const emit = defineEmits(["submit", "sendEmailOtpEvent"]);
 
@@ -202,10 +204,41 @@ const submit = async () => {
     console.log("data.value.user_id: ", data.value.user_id);
     userStore.setUser({ user_id: data.value.user_id });
     console.log("userStore.getUser(): ", userStore.getUser());
-    navigateTo("/auth/otp");
+    if (is_phone_verified()) {
+      redirect();
+    } else {
+      navigateTo("/auth/otp");
+    }
   } catch (err) {
     error.value = "Failed to fetch data";
   }
+};
+
+const is_phone_verified = async () => {
+  try {
+    const req = await lmsApi(`/users/${auth.get_user_id()}`, "POST");
+    if (req) {
+      return req?.phone_verified;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const redirect = () => {
+  let redirect_url = "";
+
+  if (channel === "CH_POLLEN_DIRECT") {
+    redirect_url = config.public.pollenDirectUrl;
+  } else {
+    redirect_url = config.public.pollenLmsUrl;
+  }
+
+  const url = new URL(redirect_url);
+  url.searchParams.append("user_id", auth.get_user_id());
+  url.searchParams.append("access_token", auth.get_access_token());
+  url.searchParams.append("expires_at", auth.get_expire_at());
+  navigateTo(url.toString(), { external: true });
 };
 
 const formatTime = computed(() => {

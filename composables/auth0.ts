@@ -27,14 +27,14 @@ export const useAuth = () => {
 
   const get_expire_at = () => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("user_id");
+      return localStorage.getItem("expires_at");
     }
     return null;
   };
 
   const get_access_token = () => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("user_id");
+      return localStorage.getItem("access_token");
     }
     return null;
   };
