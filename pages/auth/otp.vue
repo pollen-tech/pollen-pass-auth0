@@ -232,7 +232,6 @@ export default {
     async verifyOtpEvent(otp) {
       //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
       const user = this.userStore.getUser();
-      debugger;
       const payload = {
         user_id: user.user_id || getUserId(),
         country_code: parseInt(user.countryCode, 10),
