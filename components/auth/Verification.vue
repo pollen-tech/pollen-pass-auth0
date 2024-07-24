@@ -208,16 +208,24 @@ const submit = async () => {
     userStore.setUser({ user_id: data.value.user_id });
     console.log("userStore.getUser(): ", userStore.getUser());
 
-    if (data.value?.phone_verified) {
+    if (is_phone_verified) {
       redirect();
     } else {
       navigateTo("/auth/otp");
     }
-    emit("submit");
   } catch (err) {
-    emit("submit");
-
     error.value = "Failed to fetch data";
+  }
+};
+
+const is_phone_verified = async () => {
+  try {
+    const req = await lmsApi(`/users/${auth.get_user_id()}`, "POST");
+    if (req) {
+      return req?.phone_verified;
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
