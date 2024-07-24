@@ -39,7 +39,7 @@
                   prepend-icon="mdi-account-circle-outline"
                   style="color: #6b7280; text-transform: none !important"
                   class="text-capitalize"
-                  alt="Back"
+                  alt="Account"
                 >
                   <template v-slot:prepend>
                     <v-icon color="#6B7280"></v-icon>

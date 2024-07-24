@@ -27,7 +27,7 @@
             prepend-icon="mdi-account-circle-outline"
             style="color: #6b7280; text-transform: none !important"
             class="text-capitalize"
-            alt="Back"
+            alt="Account"
           >
             <template v-slot:prepend>
               <v-icon color="#6B7280"></v-icon>
@@ -208,16 +208,24 @@ const submit = async () => {
     userStore.setUser({ user_id: data.value.user_id });
     console.log("userStore.getUser(): ", userStore.getUser());
 
-    if (data.value?.phone_verified) {
+    if (is_phone_verified) {
       redirect();
     } else {
       navigateTo("/auth/otp");
     }
-    emit("submit");
   } catch (err) {
-    emit("submit");
-
     error.value = "Failed to fetch data";
+  }
+};
+
+const is_phone_verified = async () => {
+  try {
+    const req = await lmsApi(`/users/${auth.get_user_id()}`, "POST");
+    if (req) {
+      return req?.phone_verified;
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
