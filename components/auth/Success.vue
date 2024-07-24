@@ -21,7 +21,7 @@
 
             <v-row class="text-white mt-10">
               <v-col cols="12" md="6" class="font-weight-medium">
-                <h4>Member ID:{{ user.memberid }}</h4>
+                <h4>Member ID: {{ user.memberid }}</h4>
               </v-col>
               <v-col cols="12" md="6" class="font-weight-medium text-truncate">
                 <p class="text-truncate">Member since: {{ user.createdate }}</p>
