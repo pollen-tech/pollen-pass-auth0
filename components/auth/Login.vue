@@ -156,7 +156,11 @@ const showDialog = ref(false);
 //};
 
 const submit = () => {
+  isLoading.value = true;
   emit("submit", email.value);
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 7000);
 };
 
 //const onValidateCompanyName = () => {
