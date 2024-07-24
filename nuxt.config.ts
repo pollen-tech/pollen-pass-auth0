@@ -61,7 +61,7 @@ export default defineNuxtConfig({
       pollenLmsUrl:
         "http://sandbox.web.lms.s3-website-ap-southeast-1.amazonaws.com",
       pollenDirectUrl:
-        "http://sandbox.web.direct.s3-website-ap-southeast-1.amazonaws.com/redirect",
+        "http://sandbox.web.direct.s3-website-ap-southeast-1.amazonaws.com/redirect/",
     },
   },
 });

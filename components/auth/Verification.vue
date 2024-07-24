@@ -229,6 +229,7 @@ const redirect = () => {
   url.searchParams.append("user_id", auth.get_user_id());
   url.searchParams.append("access_token", auth.get_access_token());
   url.searchParams.append("expires_at", auth.get_expire_at());
+  console.log(url.toString());
   navigateTo(url.toString(), { external: true });
 };
 
