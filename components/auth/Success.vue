@@ -136,7 +136,7 @@ export default {
           name: `${userData.first_name} ${userData.last_name}`,
           email: userData.email,
           phonenumber: `+${userData.country_code} ${userData.phone_no}`,
-          memberid: userData.id,
+          memberid: userData.pollen_pass_id,
           createdate: formattedDate,
         };
         console.log("user: ", this.user);

@@ -168,23 +168,27 @@ const submit = async () => {
   emit("submit");
   console.log(user);
   let email = user.email;
+  let firstName = user.firstName;
+  let lastName = user.lastName;
+
   let otp = item.value.emailOTPCode;
   let channel_code = user.channelCode;
 
   try {
-    console.log("params: ", email, otp, channel_code);
+    console.log("params: ", email, otp, firstName, lastName );
     console.log(
-      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}`
+      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}`
     );
     console.log(
       JSON.stringify({
         email: email,
         code: otp,
-        channel_code: channel_code,
+        first_name: firstName,
+        last_name: lastName,
       })
     );
     const response = await fetch(
-      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&channel_code=${channel_code}`,
+      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}`,
       {
         method: "POST",
         headers: {
@@ -200,11 +204,13 @@ const submit = async () => {
     data.value = await response.json();
 
     auth.handleAuth0Response(data.value);
+    console.log("ok-data.value: ", data.value);
 
-    console.log("data.value.user_id: ", data.value.user_id);
+    //console.log("data.value.user_id: ", data.value.user_id);
     userStore.setUser({ user_id: data.value.user_id });
     console.log("userStore.getUser(): ", userStore.getUser());
     if (is_phone_verified()) {
+      console.log('redirect');
       redirect();
     } else {
       navigateTo("/auth/otp");
