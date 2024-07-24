@@ -21,7 +21,7 @@
 
             <v-row class="text-white mt-10">
               <v-col cols="12" md="6" class="font-weight-medium">
-                <h4>Member ID:{{ user.memberid }}</h4>
+                <h4>Member ID: {{ user.memberid }}</h4>
               </v-col>
               <v-col cols="12" md="6" class="font-weight-medium text-truncate">
                 <p class="text-truncate">Member since: {{ user.createdate }}</p>
@@ -136,7 +136,7 @@ export default {
           name: `${userData.first_name} ${userData.last_name}`,
           email: userData.email,
           phonenumber: `+${userData.country_code} ${userData.phone_no}`,
-          memberid: userData.auth_id,
+          memberid: userData.pollen_pass_id,
           createdate: formattedDate,
         };
         console.log("user: ", this.user);
