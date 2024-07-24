@@ -135,7 +135,6 @@ import { ref } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
-import { lmsApi } from "@/services/api";
 
 const auth = useAuth();
 const userStore = useUserStore();
@@ -165,7 +164,7 @@ const showDialog = ref(false);
 const emailLocal = user?.email || localStorage.getItem("email");
 
 const submit = async () => {
-  emit("submit");
+  isLoading.value = true;
   console.log(user);
   let email = user.email;
   let otp = item.value.emailOTPCode;
@@ -194,34 +193,27 @@ const submit = async () => {
       }
     );
 
+    isLoading.value = false;
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
     data.value = await response.json();
 
     auth.handleAuth0Response(data.value);
-
     console.log("data.value.user_id: ", data.value.user_id);
     userStore.setUser({ user_id: data.value.user_id });
     console.log("userStore.getUser(): ", userStore.getUser());
-    if (is_phone_verified()) {
+
+    if (data.value?.phone_verified) {
       redirect();
     } else {
       navigateTo("/auth/otp");
     }
+    emit("submit");
   } catch (err) {
-    error.value = "Failed to fetch data";
-  }
-};
+    emit("submit");
 
-const is_phone_verified = async () => {
-  try {
-    const req = await lmsApi(`/users/${auth.get_user_id()}`, "POST");
-    if (req) {
-      return req?.phone_verified;
-    }
-  } catch (err) {
-    console.log(err);
+    error.value = "Failed to fetch data";
   }
 };
 
@@ -233,7 +225,6 @@ const redirect = () => {
   } else {
     redirect_url = config.public.pollenLmsUrl;
   }
-
   const url = new URL(redirect_url);
   url.searchParams.append("user_id", auth.get_user_id());
   url.searchParams.append("access_token", auth.get_access_token());

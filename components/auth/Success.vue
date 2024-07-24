@@ -128,7 +128,7 @@ export default {
           throw new Error("Network response was not ok");
         }
         const userDataJson = await response.json();
-        const userData = userDataJson;
+        const userData = userDataJson?.data || userData;
         console.log(userData);
         //const originalDate = new Date(userData.createdAt);
         const formattedDate = moment(userData.created_at).format("DD/MM/YYYY");
@@ -136,7 +136,7 @@ export default {
           name: `${userData.first_name} ${userData.last_name}`,
           email: userData.email,
           phonenumber: `+${userData.country_code} ${userData.phone_no}`,
-          memberid: userData.id,
+          memberid: userData.auth_id,
           createdate: formattedDate,
         };
         console.log("user: ", this.user);
