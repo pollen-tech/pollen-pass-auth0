@@ -128,7 +128,7 @@ export default {
           throw new Error("Network response was not ok");
         }
         const userDataJson = await response.json();
-        const userData = userDataJson;
+        const userData = userDataJson?.data || userData;
         console.log(userData);
         //const originalDate = new Date(userData.createdAt);
         const formattedDate = moment(userData.created_at).format("DD/MM/YYYY");
