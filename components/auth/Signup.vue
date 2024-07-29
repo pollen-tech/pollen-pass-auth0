@@ -181,10 +181,12 @@ const onValidateExistEmail = async () => {
   if(!valid) {
     console.log('Form is invalid');
     error.value = "Form is invalid";
+    isLoading.value = false;
     return;
   } else {
     error.value = "";
     notification.value.message = "Form was submitted successfully";
+    isLoading.value = false;
   }
 
   let email = item.value.email;

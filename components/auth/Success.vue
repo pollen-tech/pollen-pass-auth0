@@ -65,11 +65,12 @@ export default {
     },
     config: null,
     clientId: null,
+    channel: null,
   }),
   computed: {
     componentDescription() {
       return `We will redirect you to ${
-        this.clientId === "lms" ? "Pollen LMS" : "Pollen Direct"
+        this.channel === "CH_LMS" ? "Pollen LMS" : "Pollen Direct"
       } onboarding page in 5 second(s). If you are not automatically redirected, please click the button below.`;
     },
   },
@@ -77,10 +78,14 @@ export default {
     this.config = useRuntimeConfig();
     const auth = useAuth();
     const userStore = useUserStore();
+    this.channel = auth.get_channel();
+    
     console.log(userStore);
     console.log(userStore.getUser());
     const userId = userStore.getUser()?.user_id || auth.get_user_id();
     await this.fetchUserInfo(userId);
+
+    console.log('this.channel: ', this.channel);
 
     //const userData = await this.getUserInfo();
     //const originalDate = new Date(userData.createdAt);
