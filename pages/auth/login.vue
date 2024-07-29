@@ -17,6 +17,7 @@
         </div>
       </v-col>
     </v-row>
+    <CommonConfirm ref="confirm" />
   </div>
 </template>
 
@@ -24,12 +25,22 @@
 import { ref } from "vue";
 import { lmsApi } from "~/services/api";
 import { useUserStore } from "@/store/user";
+import { useAuth } from "@/composables/auth0";
 
 const userStore = useUserStore();
+const auth = useAuth();
 
 const is_email_sent = ref(false);
 const email = ref("");
 const otp = ref("");
+const confirm = ref(null);
+
+onMounted(() => {
+  const channel = auth.get_channel();
+  if (!channel) {
+    show_dialog();
+  }
+});
 
 const send_otp = async (param) => {
   try {
@@ -59,6 +70,25 @@ const get_channel = () => {
 };
 const go_to_login = () => {
   is_email_sent.value = false;
+};
+const show_dialog = async () => {
+  const options = {
+    title: `User cannot Sign In without channel`,
+    message: `Please connect to the appropriate Pollen Channel before signing in or signing up.`,
+    icon: "mdi-lightbulb-on-20",
+    color: "purple darken-2",
+    actionText1: "Go To Pollen Direct (Buyer)",
+    actionText2: "Go To LMS (Seller)",
+    actionIcon2: "",
+    rejection: false,
+  };
+  if (await confirm.value.open(options)) {
+    navigateTo(runtimeConfig.public.pollenLmsUrl, { external: true });
+  } else {
+    navigateTo(runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""), {
+      external: true,
+    });
+  }
 };
 </script>
 

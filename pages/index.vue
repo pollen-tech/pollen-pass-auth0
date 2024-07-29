@@ -52,15 +52,18 @@
         <CommonEmpty />
       </v-container>
 
-      <CommonConfirm ref="confirm" />
     </div> -->
+
+    <CommonConfirm ref="confirm" />
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
 import { useNuxtApp } from "#app";
+import { useAuth } from "@/composables/auth0";
 
+const auth = useAuth();
 const confirm = ref(null);
 
 const nuxtApp = useNuxtApp();
@@ -73,22 +76,24 @@ const show_login = ref(true);
 const showDialog = async () => {
   if (isAuthenticated) {
     const options = {
-      title: `Congratulations ${userProfile.value.firstName}!`,
-      message: `You are now a member of Pollen Pass with access to Pollen LMS (Liquidation Management System). <br/><br/> Start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world.`,
+      title: `User cannot Sign Up without channel`,
+      message: `Please connect to the appropriate Pollen Channel before signing in or signing up.`,
       icon: "mdi-lightbulb-on-20",
       color: "purple darken-2",
-      actionText1: "Explore",
-      actionText2: "",
+      actionText1: "Go To Pollen Direct (Buyer)",
+      actionText2: "Go To LMS (Seller)",
       actionIcon2: "",
       rejection: false,
     };
-    //if (await confirm.value.open(options)) {
-    //}
+    if (await confirm.value.open(options)) {
+      navigateTo(runtimeConfig.public.pollenLmsUrl, { external: true });
+    } else {
+      navigateTo(
+        runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""),
+        { external: true }
+      );
+    }
   }
-};
-
-const onSignUp = () => {
-  navigateTo("/auth/signup");
 };
 
 onMounted(() => {
@@ -101,15 +106,20 @@ onMounted(() => {
   const channel = searchParams.get("channel");
   const action = searchParams.get("action");
 
+  auth.clear_localStorage();
+  if (!channel) {
+    localStorage.removeItem("channel");
+    showDialog();
+    return;
+  }
   if (channel) {
     localStorage.setItem("channel", channel);
-  } else {
-    localStorage.removeItem("channel");
-  }
-  if (action === "signup") {
-    navigateTo("/auth/signup");
-  } else {
-    navigateTo("/auth/login");
+
+    if (action === "signup") {
+      navigateTo("/auth/signup");
+    } else {
+      navigateTo("/auth/login");
+    }
   }
 });
 </script>

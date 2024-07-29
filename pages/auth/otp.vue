@@ -223,17 +223,13 @@ export default {
         console.log(error);
       }
     },
-    getUserId() {
-      if (typeof window !== "undefined") {
-        return localStorage.getItem("user_id");
-      }
-      return null;
-    },
     async verifyOtpEvent(otp) {
       //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
+      const user_id =
+        typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
       const user = this.userStore.getUser();
       const payload = {
-        user_id: user.user_id || getUserId(),
+        user_id: user.user_id || user_id,
         country_code: parseInt(user.countryCode, 10),
         phone_no: parseInt(user.phoneNumber, 10),
         otp: otp,

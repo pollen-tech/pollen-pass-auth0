@@ -65,6 +65,12 @@ export const useAuth = () => {
     return null;
   };
 
+  const clear_localStorage = () => {
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+    }
+  };
+
   return {
     get_user_id,
     handleAuth0Response,
@@ -73,5 +79,6 @@ export const useAuth = () => {
     get_channel,
     get_expire_at,
     get_access_token,
+    clear_localStorage,
   };
 };
