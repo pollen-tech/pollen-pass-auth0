@@ -135,6 +135,7 @@ import { ref } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
+import { lmsApi } from "~/services/api";
 
 const auth = useAuth();
 const userStore = useUserStore();
@@ -204,28 +205,19 @@ const submit = async () => {
     data.value = await response.json();
 
     auth.handleAuth0Response(data.value);
-    console.log("data.value.user_id: ", data.value.user_id);
     userStore.setUser({ user_id: data.value.user_id });
-    console.log("userStore.getUser(): ", userStore.getUser());
 
-    if (is_phone_verified) {
+    console.log("data.value.user_id: ", data.value.user_id);
+    console.log("userStore.getUser(): ", userStore.getUser());
+    console.log("phone_verified: ", data.value?.phone_verified);
+
+    if (data.value?.phone_verified) {
       redirect();
     } else {
       navigateTo("/auth/otp");
     }
   } catch (err) {
     error.value = "Failed to fetch data";
-  }
-};
-
-const is_phone_verified = async () => {
-  try {
-    const req = await lmsApi(`/users/${auth.get_user_id()}`, "POST");
-    if (req) {
-      return req?.phone_verified;
-    }
-  } catch (err) {
-    console.log(err);
   }
 };
 
