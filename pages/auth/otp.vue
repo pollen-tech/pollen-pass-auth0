@@ -70,6 +70,7 @@
             @verify-otp-event="verifyOtpEvent"
             @send-otp-event="resendOtp"
             @set-otp-loading="verifyOtpLoading"
+            @send-welcome-email-event="sendWelcomeEmail"
           />
         </div>
       </v-col>
@@ -146,36 +147,36 @@ export default {
       this.savePhone(param);
     },
     async savePhone(param) {},
-    async verifyOtp(param) {
-      this.otp = param;
-      this.isOtpValid = true;
-      const url = `${this.config.public.backendUrl}/otp/verify`;
-      const body = {
-        referenceId: this.user.referenceId,
-        otp: this.otp,
-      };
-      try {
-        const sendOtpCode = await api(url, "PATCH", body);
-        console.log(sendOtpCode);
-        if (
-          sendOtpCode === undefined ||
-          !sendOtpCode.statusCode ||
-          sendOtpCode.statusCode === 204 ||
-          sendOtpCode.statusCode === 200
-        ) {
-          setTimeout(() => {
-            navigateTo("/auth/success");
-          }, 2000);
-          this.isOtpValid = false;
-          this.isOtpLoading = false;
-        } else {
-          this.isOtpLoading = false;
-          this.getErrorMessage(sendOtpCode);
-        }
-      } catch (error) {
-        this.isOtpLoading = false;
-      }
-    },
+    //async verifyOtp(param) {
+    //  this.otp = param;
+    //  this.isOtpValid = true;
+    //  const url = `${this.config.public.backendUrl}/otp/verify`;
+    //  const body = {
+    //    referenceId: this.user.referenceId,
+    //    otp: this.otp,
+    //  };
+    //  try {
+    //    const sendOtpCode = await api(url, "PATCH", body);
+    //    console.log(sendOtpCode);
+    //    if (
+    //      sendOtpCode === undefined ||
+    //      !sendOtpCode.statusCode ||
+    //      sendOtpCode.statusCode === 204 ||
+    //      sendOtpCode.statusCode === 200
+    //    ) {
+    //      setTimeout(() => {
+    //        navigateTo("/auth/success");
+    //      }, 2000);
+    //      this.isOtpValid = false;
+    //      this.isOtpLoading = false;
+    //    } else {
+    //      this.isOtpLoading = false;
+    //      this.getErrorMessage(sendOtpCode);
+    //    }
+    //  } catch (error) {
+    //    this.isOtpLoading = false;
+    //  }
+    //},
     verifyOtpLoading() {
       //this.isOtpLoading = true;
     },
@@ -223,6 +224,29 @@ export default {
         console.log(error);
       }
     },
+    async sendWelcomeEmail(user_id) {
+      try {
+        const response = await fetch(
+          `${this.config.public.API_URL}/users/${user_id}/welcome-email`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        console.log('sent email');
+        console.log(response);
+        console.log(user_id);
+
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async verifyOtpEvent(otp) {
       //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
       const user_id =
@@ -250,14 +274,18 @@ export default {
           throw new Error("Network response was not ok");
         }
         //this.data.value = await response.json();
-        console.log(this.isOtpPage);
         this.isOtpPage = true;
-        console.log(this.isOtpPage);
+        this.sendWelcomeEmail(user_id);
+        //console.log('auth/success');
+        //console.log(response);
+        //console.log(user_id);
+
         navigateTo("/auth/success");
       } catch (error) {
         console.log(error);
       }
     },
+    
     getErrorMessage(req) {
       this.isPhoneExist = false;
       let errorMsg = req.message;
