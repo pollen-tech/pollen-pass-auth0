@@ -79,13 +79,13 @@ export default {
     const auth = useAuth();
     const userStore = useUserStore();
     this.channel = auth.get_channel();
-    
+
     console.log(userStore);
     console.log(userStore.getUser());
     const userId = userStore.getUser()?.user_id || auth.get_user_id();
     await this.fetchUserInfo(userId);
 
-    console.log('this.channel: ', this.channel);
+    console.log("this.channel: ", this.channel);
 
     //const userData = await this.getUserInfo();
     //const originalDate = new Date(userData.createdAt);
@@ -155,7 +155,7 @@ export default {
       const channel = auth.get_channel();
       let redirect_url = "";
 
-      if (channel === "CH_POLLEN_DIRECT") {
+      if (channel === "CH_DIRECT") {
         redirect_url = runtimeConfig.public.pollenDirectUrl;
       } else {
         redirect_url = runtimeConfig.public.pollenLmsUrl;

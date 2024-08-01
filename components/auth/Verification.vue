@@ -177,7 +177,7 @@ const submit = async () => {
   try {
     console.log("params: ", email, otp, firstName, lastName);
     console.log(
-      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`
+      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`
     );
     console.log(
       JSON.stringify({
@@ -188,7 +188,7 @@ const submit = async () => {
       })
     );
     const response = await fetch(
-      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`,
+      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}&channel_code=${channel_code}`,
       {
         method: "POST",
         headers: {
@@ -224,7 +224,7 @@ const submit = async () => {
 const redirect = () => {
   let redirect_url = "";
 
-  if (channel === "CH_POLLEN_DIRECT") {
+  if (channel === "CH_DIRECT") {
     redirect_url = config.public.pollenDirectUrl;
   } else {
     redirect_url = config.public.pollenLmsUrl;
