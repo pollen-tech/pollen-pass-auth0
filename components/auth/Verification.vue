@@ -188,7 +188,7 @@ const submit = async () => {
       })
     );
     const response = await fetch(
-      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}&channel_code=${channel_code}`,
+      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}&channel_code=${channel_code}`,
       {
         method: "POST",
         headers: {
