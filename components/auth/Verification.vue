@@ -175,34 +175,24 @@ const submit = async () => {
   let channel_code = user.channelCode;
 
   try {
-    console.log("params: ", email, otp, firstName, lastName);
-    console.log(
-      `${config.public.API_URL}/auth0/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`
+    const body = {
+      email: email,
+      code: otp,
+      first_name: firstName,
+      last_name: lastName,
+      incoming_channel: channel_code,
+    };
+    const req = await lmsApi(
+      `/auth0/pollen-pass/password-less-email-otp-validate`,
+      "POST",
+      body
     );
-    console.log(
-      JSON.stringify({
-        email: email,
-        code: otp,
-        first_name: firstName,
-        last_name: lastName,
-      })
-    );
-    const response = await fetch(
-      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}&channel_code=${channel_code}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      }
-    );
-
     isLoading.value = false;
-    if (!response.ok) {
+    if (req.statusCode) {
       throw new Error("Network response was not ok");
     }
-    data.value = await response.json();
+
+    data.value = await req.json();
 
     auth.handleAuth0Response(data.value);
     userStore.setUser({ user_id: data.value.user_id });
