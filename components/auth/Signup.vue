@@ -83,7 +83,9 @@
             >Continue</v-btn
           >
           <p class="red--text text-caption text-center">{{ error }}</p>
-          <p class="text-green-lighten-1 text-caption text-center">{{ notification.message }}</p>
+          <p class="text-green-lighten-1 text-caption text-center">
+            {{ notification.message }}
+          </p>
         </v-form>
       </v-card>
       <SmallDialog />
@@ -154,9 +156,13 @@ const notification = ref({
 const item = ref({ items: [] });
 const valid = ref(false);
 const rules = reactive({
-  required: [(v) => !!v || 'Field is required'],
+  required: [(v) => !!v || "Field is required"],
   //min: (v) => v.length >= 8 || "Min 8 characters",
-  email: [(v) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'],
+  email: [
+    (v) =>
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+      "E-mail must be valid",
+  ],
 });
 const formRef = ref(null);
 const isLoading = ref(false);
@@ -178,8 +184,8 @@ const onValidateExistEmail = async () => {
 
   const { valid } = await formRef.value.validate();
 
-  if(!valid) {
-    console.log('Form is invalid');
+  if (!valid) {
+    console.log("Form is invalid");
     error.value = "Form is invalid";
     isLoading.value = false;
     return;
@@ -217,7 +223,6 @@ const onValidateExistEmail = async () => {
       submit();
     }
     isLoading.value = false;
-
   } catch (err) {
     isLoading.value = false;
     error.value = "Failed to fetch data";
@@ -225,13 +230,20 @@ const onValidateExistEmail = async () => {
   }
 };
 
+const get_channel = () => {
+  if (typeof window !== "undefined") {
+    const channel = localStorage.getItem("channel");
+    return channel;
+  }
+};
+
 const submit = async () => {
-  emit('submit', item.value);
+  emit("submit", item.value);
   const user = {
     email: item.value.email,
     firstName: item.value.firstName,
     lastName: item.value.lastName,
-    channelCode: 'POLLEN_PASS',
+    channelCode: get_channel() || "POLLEN_PASS",
   };
   userStore.setUser(user);
   console.log(user);
