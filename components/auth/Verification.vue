@@ -175,9 +175,9 @@ const submit = async () => {
   let channel_code = user.channelCode;
 
   try {
-    console.log("params: ", email, otp, firstName, lastName );
+    console.log("params: ", email, otp, firstName, lastName);
     console.log(
-      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}`
+      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`
     );
     console.log(
       JSON.stringify({
@@ -188,7 +188,7 @@ const submit = async () => {
       })
     );
     const response = await fetch(
-      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}`,
+      `${config.public.API_URL}/auth0/pollen-pass/password-less-email-otp-validate/${email}?code=${otp}&first_name=${firstName}&last_name=${lastName}?channel_code=${channel_code}`,
       {
         method: "POST",
         headers: {

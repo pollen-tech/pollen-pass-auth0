@@ -230,22 +230,16 @@ const onValidateExistEmail = async () => {
   }
 };
 
-const get_channel = () => {
-  if (typeof window !== "undefined") {
-    const channel = localStorage.getItem("channel");
-    return channel;
-  }
-};
-
 const submit = async () => {
   emit("submit", item.value);
   const user = {
     email: item.value.email,
     firstName: item.value.firstName,
     lastName: item.value.lastName,
-    channelCode: get_channel() || "POLLEN_PASS",
+    channelCode: get_channel(),
   };
   userStore.setUser(user);
+  console.log(get_channel());
   console.log(user);
   let email = item.value.email;
 
@@ -274,6 +268,15 @@ const submit = async () => {
     isLoading.value = false;
     error.value = "Failed to fetch data";
     console.log(err);
+  }
+};
+
+const get_channel = () => {
+  if (typeof window !== "undefined") {
+    const channel = localStorage.getItem("channel")
+      ? localStorage.getItem("channel")
+      : "POLLEN-PASS";
+    return channel;
   }
 };
 
