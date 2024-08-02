@@ -187,24 +187,22 @@ const submit = async () => {
       "POST",
       body
     );
-    isLoading.value = false;
-    if (req.statusCode) {
-      throw new Error("Network response was not ok");
-    }
+    if (req.user_id) {
+      isLoading.value = false;
+      data.value = req;
 
-    data.value = await req.json();
+      auth.handleAuth0Response(data.value);
+      userStore.setUser({ user_id: data.value.user_id });
 
-    auth.handleAuth0Response(data.value);
-    userStore.setUser({ user_id: data.value.user_id });
+      console.log("data.value.user_id: ", data.value.user_id);
+      console.log("userStore.getUser(): ", userStore.getUser());
+      console.log("phone_verified: ", data.value?.phone_verified);
 
-    console.log("data.value.user_id: ", data.value.user_id);
-    console.log("userStore.getUser(): ", userStore.getUser());
-    console.log("phone_verified: ", data.value?.phone_verified);
-
-    if (data.value?.phone_verified) {
-      redirect();
-    } else {
-      navigateTo("/auth/otp");
+      if (data.value?.phone_verified) {
+        redirect();
+      } else {
+        navigateTo("/auth/otp");
+      }
     }
   } catch (err) {
     error.value = "Failed to fetch data";
