@@ -187,8 +187,8 @@ const submit = async () => {
       "POST",
       body
     );
+    isLoading.value = false;
     if (req.user_id) {
-      isLoading.value = false;
       data.value = req;
 
       auth.handleAuth0Response(data.value);
