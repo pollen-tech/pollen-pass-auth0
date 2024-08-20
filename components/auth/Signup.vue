@@ -275,7 +275,7 @@ const get_channel = () => {
   if (typeof window !== "undefined") {
     const channel = localStorage.getItem("channel")
       ? localStorage.getItem("channel")
-      : "POLLEN-PASS";
+      : "POLLEN_PASS";
     return channel;
   }
 };
