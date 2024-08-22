@@ -203,7 +203,7 @@ export default {
       const payload = {
         country_code: parseInt(user.countryCode, 10),
         phone_no: parseInt(user.phoneNumber, 10),
-        method: "sms",
+        method: type,
       };
 
       try {
@@ -239,10 +239,9 @@ export default {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        console.log('sent email');
+        console.log("sent email");
         console.log(response);
         console.log(user_id);
-
       } catch (error) {
         console.log(error);
       }
@@ -285,7 +284,7 @@ export default {
         console.log(error);
       }
     },
-    
+
     getErrorMessage(req) {
       this.isPhoneExist = false;
       let errorMsg = req.message;
