@@ -26,11 +26,11 @@
                   prepend-icon="mdi-chevron-left"
                   style="color: #6b7280"
                   class="text-capitalize"
-                  @click="goToPrevious()"
                   alt="Back"
+                  @click="goToPrevious()"
                 >
-                  <template v-slot:prepend>
-                    <v-icon color="#6B7280"></v-icon>
+                  <template #prepend>
+                    <v-icon color="#6B7280" />
                   </template>
                   Previous
                 </v-btn>
@@ -41,10 +41,10 @@
                   class="text-capitalize"
                   alt="Account"
                 >
-                  <template v-slot:prepend>
-                    <v-icon color="#6B7280"></v-icon>
+                  <template #prepend>
+                    <v-icon color="#6B7280" />
                   </template>
-                  {{ this.emailLocal }}
+                  {{ emailLocal }}
                 </v-btn>
               </v-sheet>
             </v-col>
@@ -56,16 +56,16 @@
             :is-phone-save="isPhoneSave"
             @otp-event="getPhone"
             @send-otp="sendOtp"
-            @update:isPhoneSave="updateIsPhoneSave"
+            @update:is-phone-save="updateIsPhoneSave"
           />
           <!-- TODO add if user exist -->
           <AuthOtpCode
             v-if="isOtpPage"
-            :referenceId="user.referenceId"
+            :reference-id="user.referenceId"
             :phonenumber="user.phone"
-            :phoneVerified="user.phoneVerified"
-            :isOtpLoading="isOtpLoading"
-            :isOtpValid="isOtpValid"
+            :phone-verified="user.phoneVerified"
+            :is-otp-loading="isOtpLoading"
+            :is-otp-valid="isOtpValid"
             @previous-page="goToPhoneNumberPage"
             @verify-otp-event="verifyOtpEvent"
             @send-otp-event="resendOtp"
@@ -75,17 +75,17 @@
         </div>
       </v-col>
     </v-row>
+    <NotificationStatus />
   </div>
-  <NotificationStatus />
 </template>
 
 <script>
-import { mapState } from "pinia";
 import { useCommonStore } from "~/store/common";
 import { useUserStore } from "~/store/user";
 
 export default {
-  setup(props) {
+  middleware: ["keycloak"],
+  setup(_props) {
     const commonStore = useCommonStore();
     const userStore = useUserStore();
     const config = useRuntimeConfig();
@@ -99,7 +99,6 @@ export default {
     return { commonStore, userStore, config, data, error, loading, emailLocal };
   },
   data: () => ({
-    config: null,
     leftText: "Back to Pollen Direct",
     rightText: "Sign Up",
     notificationTitle: "Verify your email address",
@@ -112,7 +111,7 @@ export default {
     rules: {
       required: (value) => !!value || "Required.",
       min: (v) => v.length >= 8 || "Min 8 characters",
-      emailMatch: () => `The email and password you entered don't match`,
+      emailMatch: () => "The email and password you entered don't match",
     },
     confirmText: "Confirm phone number & send OTP",
     enterOtp: "Enter Verification Code",
@@ -124,7 +123,6 @@ export default {
     isOtpPage: false,
     isPhoneExist: false,
   }),
-  middleware: ["keycloak"],
   computed: {},
   async mounted() {
     this.config = useRuntimeConfig();
@@ -146,7 +144,7 @@ export default {
       this.user.phone = param;
       this.savePhone(param);
     },
-    async savePhone(param) {},
+    async savePhone(_param) {},
     //async verifyOtp(param) {
     //  this.otp = param;
     //  this.isOtpValid = true;
@@ -233,7 +231,7 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -266,7 +264,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         if (!response.ok) {

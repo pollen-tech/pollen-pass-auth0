@@ -8,7 +8,9 @@
         <div class="my-2">
           <div class="d-flex">
             <label class="font-weight-medium text-body-2"
-              >Enter your phone number for verification<span class="red--text">*</span>
+              >Enter your phone number for verification<span class="red--text"
+                >*</span
+              >
             </label>
             <v-spacer />
             <v-chip
@@ -26,26 +28,26 @@
             v-model="phoneLocal"
             mode="international"
             :required="true"
-            :maxLen="20"
+            :max-len="20"
             :value="phone"
-            :disabledFormatting="true"
-            :validCharactersOnly="true"
+            :disabled-formatting="true"
+            :valid-characters-only="true"
             :class="phoneValid ? 'phoneStyle pa-2' : 'hasError pa-2'"
-            :autoFormat="false" 
-            :dropdownOptions="{
+            :auto-format="false"
+            :dropdown-options="{
               showDialCodeInSelection: true,
               showSearchBox: true,
               showFlags: true,
             }"
-            :inputOptions="{
+            :input-options="{
               showFlags: true,
               autocomplete: false,
               showDialCode: false,
             }"
+            style="border-radius: 6px !important"
             @validate="phoneObject"
             @input="onPhoneInput"
             @country-changed="onCountryChange"
-            style="border-radius: 6px !important;"
           />
 
           <p v-if="!phoneValid" class="red--text text-caption mt-2">
@@ -71,20 +73,20 @@
             class="align-center justify-center d-flex"
           >
             <v-radio value="1" color="#8431E7" :disabled="!phoneValid">
-              <template v-slot:label>
+              <template #label>
                 <div class="text-body-2 my-6">Send OTP via SMS</div>
               </template></v-radio
             >
             <v-divider />
             <v-radio value="2" color="#8431E7" :disabled="!phoneValid">
-              <template v-slot:label>
+              <template #label>
                 <div class="text-body-2 my-6">Send OTP via Whatsapp</div>
               </template>
             </v-radio>
             <v-divider />
             <p class="font-weight-bold text-center my-4 text-body-2">OR</p>
             <v-radio value="3" color="#8431E7" :disabled="!phoneValid">
-              <template v-slot:label>
+              <template #label>
                 <div class="text-body-2 my-6">Send OTP via Voice Call</div>
               </template>
             </v-radio>
@@ -116,11 +118,10 @@
 <script>
 import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
-import { useUserStore } from '~/store/user';
+import { useUserStore } from "~/store/user";
 
 export default {
   components: { VueTelInput },
-  emits: ["otpEvent", "someEvent", "sendOtp"],
   props: {
     phone: {
       type: String,
@@ -140,9 +141,9 @@ export default {
       readonly: false,
       default: "",
     },
-
   },
-  
+  emits: ["otpEvent", "someEvent", "sendOtp", "isPhoneSave"],
+
   data() {
     return {
       notificationTitle1: "Phone number Verification",
@@ -154,6 +155,11 @@ export default {
       config: null,
       otpType: null,
     };
+  },
+  mounted() {
+    this.phoneLocal = this.phone || "";
+    this.config = useRuntimeConfig();
+    this.salesTeamNumber = this.config.public.salesTeamNumber;
   },
   methods: {
     phoneObject(object) {
@@ -183,25 +189,21 @@ export default {
     },
     savePhone() {
       const userStore = useUserStore();
-      const user = userStore.getUser();
 
       this.$emit("otpEvent", this.phoneLocal);
-      this.$emit('update:isPhoneSave', true);
-      const cleanedPhoneNumber = this.phoneLocal.replace(/\s+/g, '');
-      userStore.setUser({phoneNumber: cleanedPhoneNumber, countryCode: this.countryCode});
+      this.$emit("update:isPhoneSave", true);
+      const cleanedPhoneNumber = this.phoneLocal.replace(/\s+/g, "");
+      userStore.setUser({
+        phoneNumber: cleanedPhoneNumber,
+        countryCode: this.countryCode,
+      });
     },
     onPhoneInput(value) {
-      //console.log('Phone value:', {value});
+      console.log("Phone value:", { value });
     },
     onCountryChange(country) {
       this.countryCode = country.dialCode;
     },
-
-  },
-  mounted() {
-    this.phoneLocal = this.phone || "";
-    this.config = useRuntimeConfig();
-    this.salesTeamNumber = this.config.public.salesTeamNumber;
   },
 };
 </script>

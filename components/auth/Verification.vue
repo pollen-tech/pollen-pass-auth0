@@ -14,11 +14,11 @@
             prepend-icon="mdi-chevron-left"
             style="color: #6b7280"
             class="text-capitalize"
-            @click="returnToSignup()"
             alt="Back"
+            @click="returnToSignup()"
           >
-            <template v-slot:prepend>
-              <v-icon color="#6B7280"></v-icon>
+            <template #prepend>
+              <v-icon color="#6B7280" />
             </template>
             Previous
           </v-btn>
@@ -29,8 +29,8 @@
             class="text-capitalize"
             alt="Account"
           >
-            <template v-slot:prepend>
-              <v-icon color="#6B7280"></v-icon>
+            <template #prepend>
+              <v-icon color="#6B7280" />
             </template>
             {{ emailLocal }}
           </v-btn>
@@ -63,7 +63,7 @@
               v-model="item.emailOTPCode"
               :length="otpLength"
               :rules="required"
-            ></v-otp-input>
+            />
           </div>
 
           <div class="text-center my-4 grey--text">
@@ -116,7 +116,7 @@
             </p>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               variant="outlined"
               class="ma-2 text-capitalize"
@@ -143,7 +143,6 @@ const user = userStore.getUser();
 
 const data = ref(null);
 const error = ref(null);
-const loading = ref(true);
 const config = useRuntimeConfig();
 
 const otp = ref("");
@@ -167,12 +166,12 @@ const emailLocal = user?.email || localStorage.getItem("email");
 const submit = async () => {
   isLoading.value = true;
   console.log(user);
-  let email = user.email;
-  let firstName = user.firstName;
-  let lastName = user.lastName;
+  const email = user.email;
+  const firstName = user.firstName;
+  const lastName = user.lastName;
 
-  let otp = item.value.emailOTPCode;
-  let channel_code = user.channelCode;
+  const otp = item.value.emailOTPCode;
+  const channel_code = user.channelCode;
 
   try {
     const body = {
@@ -183,9 +182,9 @@ const submit = async () => {
       incoming_channel: channel_code,
     };
     const req = await lmsApi(
-      `/auth0/pollen-pass/password-less-email-otp-validate`,
+      "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
-      body
+      body,
     );
     isLoading.value = false;
     if (req.user_id) {
@@ -205,6 +204,7 @@ const submit = async () => {
       }
     }
   } catch (err) {
+    console.log(err);
     error.value = "Failed to fetch data";
   }
 };
@@ -230,7 +230,7 @@ const formatTime = computed(() => {
   const seconds = remainingTime.value % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
-    "0"
+    "0",
   )}`;
 });
 
@@ -260,7 +260,7 @@ const resendEmailOtp = async () => {
   startTimer();
   otp.value = "";
 
-  let email = user.email;
+  const email = user.email;
   //Run API
   try {
     const response = await fetch(
@@ -270,7 +270,7 @@ const resendEmailOtp = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -278,22 +278,13 @@ const resendEmailOtp = async () => {
     }
     data.value = await response.json();
   } catch (err) {
+    console.log(err);
     error.value = "Failed to fetch data";
   }
 };
 
-const returnToLogin = () => {
-  navigateTo("/auth/login");
-};
 const returnToSignup = () => {
   navigateTo("/auth/login");
-};
-
-const get_channel = () => {
-  if (typeof window !== "undefined") {
-    const channel = localStorage.getItem("channel");
-    return channel;
-  }
 };
 </script>
 <style>

@@ -42,7 +42,7 @@
               :rules="rules.required"
               class="custom-text-field"
               autocomplete="given-name"
-            ></v-text-field>
+            />
           </div>
 
           <div class="my-4 text-start flex-1-0">
@@ -57,7 +57,7 @@
               :rules="rules.required"
               class="custom-text-field"
               autocomplete="family-name"
-            ></v-text-field>
+            />
           </div>
 
           <div class="my-4 text-start flex-1-0">
@@ -71,7 +71,7 @@
               :rules="[...rules.required, rules.email]"
               class="custom-text-field"
               autocomplete="email"
-            ></v-text-field>
+            />
           </div>
 
           <v-btn
@@ -121,8 +121,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-import { useSellerStore } from "@/store/seller";
-import { useCountryStore } from "@/store/country";
 import { useUserStore } from "@/store/user";
 import { useRuntimeConfig } from "#app";
 import SmallDialog from "@/components/common/SmallDialog.vue";
@@ -131,21 +129,11 @@ import { useDialogStore } from "@/store/dialog";
 const dialogStore = useDialogStore();
 const userStore = useUserStore();
 
-let email = "";
-let firstName = "";
-let lastName = "";
-
 const data = ref(null);
 const error = ref(null);
-const loading = ref(true);
 const config = useRuntimeConfig();
 
 const emit = defineEmits(["submit"]);
-
-const countryStore = useCountryStore();
-const { countries } = storeToRefs(countryStore);
-
-const sellerStore = useSellerStore();
 
 const title = ref("Enter your information");
 const notification = ref({
@@ -167,15 +155,12 @@ const rules = reactive({
 const formRef = ref(null);
 const isLoading = ref(false);
 //const showDialog = ref(false);
-const validateCompanyName = ref(0);
-const selectedItem = ref(null);
-const smallDialog = ref(false);
 
 const showDialog = () => {
   console.log("showDialog");
   dialogStore.showDialog(
     "Email address already exist",
-    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>'
+    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>',
   );
 };
 
@@ -195,7 +180,7 @@ const onValidateExistEmail = async () => {
     isLoading.value = false;
   }
 
-  let email = item.value.email;
+  const email = item.value.email;
 
   try {
     const response = await fetch(
@@ -205,7 +190,7 @@ const onValidateExistEmail = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -241,7 +226,7 @@ const submit = async () => {
   userStore.setUser(user);
   console.log(get_channel());
   console.log(user);
-  let email = item.value.email;
+  const email = item.value.email;
 
   try {
     const response = await fetch(
@@ -251,7 +236,7 @@ const submit = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {

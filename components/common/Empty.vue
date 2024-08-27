@@ -25,8 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useRuntimeConfig, navigateTo } from "#imports";
+import { navigateTo } from "#imports";
 
 export default {
   setup() {
@@ -40,7 +39,6 @@ export default {
     };
   },
   mounted() {
-    const config = useRuntimeConfig();
     this.phoneLocal = "";
   },
   methods: {
