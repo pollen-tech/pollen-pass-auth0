@@ -54,9 +54,9 @@ export default defineNuxtConfig({
       internalKey: "c3RhZ2luZy1wb2xsZW4udGVjaA==",
       appName: "Pollen Pass",
       appVersion: "2.0.0",
-      API_URL: "https://helix-sb.pollentech.cloud/user-onboard/api/v1", // "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev",
-      pollenLmsUrl: "https://lms-sb.pollentech.cloud",
-      pollenDirectUrl: "https://direct-sb.pollentech.cloud/auth/login",
+      API_URL: process.env.NUXT_USER_ONBOARD_API, // "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev",
+      pollenLmsUrl: process.env.NUXT_POLLEN_LMS_URL,
+      pollenDirectUrl: process.env.NUXT_POLLEN_DIRECT_URL,
     },
   },
 });
