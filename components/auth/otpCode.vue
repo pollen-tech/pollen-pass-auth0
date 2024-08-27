@@ -13,7 +13,7 @@
           v-model="otp"
           :length="otpLength"
           :loading="isOtpLoading"
-        ></v-otp-input>
+        />
 
         <p v-if="!isOtpValid" class="red--text text-caption mt-2 text-center">
           OTP is invalid
@@ -98,7 +98,7 @@ export default {
       const seconds = this.remainingTime % 60;
       return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
         2,
-        "0"
+        "0",
       )}`;
     },
   },
@@ -108,7 +108,7 @@ export default {
   },
   methods: {
     sendPhoneNumber() {
-      console.log('sendPhoneNumber: ', this.otp);
+      console.log("sendPhoneNumber: ", this.otp);
       this.$emit("setOtpLoading", true);
 
       this.$emit("verifyOtpEvent", this.otp);

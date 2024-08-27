@@ -60,24 +60,22 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { useNuxtApp } from "#app";
 import { useAuth } from "@/composables/auth0";
 
 const auth = useAuth();
 const confirm = ref(null);
 
-const nuxtApp = useNuxtApp();
 const runtimeConfig = useRuntimeConfig();
 
 const isAuthenticated = ref(false);
-const userProfile = ref({ firstName: "" });
 const show_login = ref(true);
 
 const showDialog = async () => {
-  if (isAuthenticated) {
+  if (isAuthenticated.value) {
     const options = {
-      title: `User cannot Sign Up without channel`,
-      message: `Please connect to the appropriate Pollen Channel before signing in or signing up.`,
+      title: "User cannot Sign Up without channel",
+      message:
+        "Please connect to the appropriate Pollen Channel before signing in or signing up.",
       icon: "mdi-lightbulb-on-20",
       color: "purple darken-2",
       actionText1: "Go To Pollen Direct (Buyer)",
@@ -90,7 +88,7 @@ const showDialog = async () => {
     } else {
       navigateTo(
         runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""),
-        { external: true }
+        { external: true },
       );
     }
   }
@@ -100,7 +98,7 @@ onMounted(() => {
   show_login.value = false;
   const router = useRouter();
   const searchParams = new URLSearchParams(
-    router.currentRoute.value.fullPath.split("?")[1]
+    router.currentRoute.value.fullPath.split("?")[1],
   );
 
   const channel = searchParams.get("channel");

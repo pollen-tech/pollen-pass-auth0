@@ -32,7 +32,6 @@ const auth = useAuth();
 
 const is_email_sent = ref(false);
 const email = ref("");
-const otp = ref("");
 const confirm = ref(null);
 
 onMounted(() => {
@@ -47,7 +46,7 @@ const send_otp = async (param) => {
     email.value = param;
     const req = await lmsApi(
       `/auth0/password-less-email-login/${email.value}`,
-      "POST"
+      "POST",
     );
     if (req) {
       const user = {
@@ -68,13 +67,12 @@ const get_channel = () => {
     return channel;
   }
 };
-const go_to_login = () => {
-  is_email_sent.value = false;
-};
+
 const show_dialog = async () => {
   const options = {
-    title: `User cannot Sign In without channel`,
-    message: `Please connect to the appropriate Pollen Channel before signing in or signing up.`,
+    title: "User cannot Sign In without channel",
+    message:
+      "Please connect to the appropriate Pollen Channel before signing in or signing up.",
     icon: "mdi-lightbulb-on-20",
     color: "purple darken-2",
     actionText1: "Go To Pollen Direct (Buyer)",

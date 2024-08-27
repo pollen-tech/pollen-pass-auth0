@@ -42,7 +42,7 @@
               placeholder="Enter valid email address"
               :rules="required"
               class="custom-text-field"
-            ></v-text-field>
+            />
           </div>
           <!--<v-checkbox
             v-model="checkAcceptTerms"
@@ -94,7 +94,7 @@
             </p>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               variant="outlined"
               class="ma-2 text-capitalize"
@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 //import { useSellerStore } from "@/store/seller";
 //import { useCountryStore } from "@/store/country";
 
@@ -122,9 +122,6 @@ const emit = defineEmits(["submit"]);
 
 const title = ref("Login");
 const desc = ref("Login to your Pollen Pass account");
-const SignupDesc = ref(
-  "Want to access Pollen LMS? <a href='/auth/signup'>Sign Up with Pollen Pass</a>"
-);
 
 const notification = ref({
   title: "How to Start Selling with Pollen's Liquidation Management System",
@@ -137,11 +134,6 @@ const email = ref("");
 //  emailMatch: () => `The email and password you entered don't match`,
 //});
 const required = [(v) => !!v || "Field is required"];
-const requiredEmail = [
-  (v) =>
-    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-    "E-mail must be valid",
-];
 const isLoading = ref(false);
 const showDialog = ref(false);
 //const validateCompanyName = ref(0);

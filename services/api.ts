@@ -1,7 +1,7 @@
 export const ppApi = async (
   url: string,
   method = "GET",
-  data: Record<string, any> = {}
+  data: Record<string, any> = {},
 ): Promise<any> => {
   const config = useRuntimeConfig(); // Assuming useRuntimeConfig is imported and available
   const init: RequestInit = {
@@ -19,7 +19,7 @@ export const ppApi = async (
   try {
     const fetchData = await fetch(
       new URL(url, config.public.adminApiUrl),
-      init
+      init,
     );
 
     if (fetchData.status !== 204) {
@@ -33,7 +33,7 @@ export const ppApi = async (
 export const auth0 = async (
   url: string,
   method = "GET",
-  data: Record<string, any> = {}
+  data: Record<string, any> = {},
 ): Promise<any> => {
   const config = useRuntimeConfig(); // Assuming useRuntimeConfig is imported and available
   const init: RequestInit = {
@@ -50,7 +50,7 @@ export const auth0 = async (
   try {
     const fetchData = await fetch(
       new URL(url, config.public.adminApiUrl),
-      init
+      init,
     );
 
     if (fetchData.status !== 204) {
@@ -64,7 +64,7 @@ export const auth0 = async (
 export const lmsApi = async (
   url: string,
   method = "GET",
-  data: Record<string, any> = {}
+  data: Record<string, any> = {},
 ): Promise<any> => {
   const config = useRuntimeConfig(); // Assuming useRuntimeConfig is imported and available
   const init: RequestInit = {

@@ -137,20 +137,20 @@
               variant="text"
               icon="mdi-chevron-right"
               @click.stop="rail = !rail"
-            ></v-btn>
+            />
             <v-btn
               v-else
               variant="text"
               icon="mdi-chevron-left"
               @click.stop="rail = !rail"
-            ></v-btn>
+            />
 
             Hide Navigation Bar
           </div>
         </template>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-list-item nav>
         <template #title>
@@ -176,7 +176,7 @@
         </template>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider />
       <v-list
         density="compact"
         nav
@@ -185,7 +185,7 @@
           height: $vuetify.display.height <= 430 ? '105%!important' : '',
         }"
       >
-        <v-spacer v-if="$vuetify.display.height > 390"></v-spacer>
+        <v-spacer v-if="$vuetify.display.height > 390" />
         <v-list-item
           class="logout-item w-100"
           :class="{
@@ -197,8 +197,8 @@
               <v-icon
                 color="gray"
                 size="large"
-                @click="onLogout()"
                 class="rotate-icon mr-2"
+                @click="onLogout()"
                 >mdi-logout</v-icon
               >
               <p class="text-caption pl-6">Logout</p>
@@ -232,16 +232,11 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
-import { useNuxtApp } from "#app";
-
-const nuxtApp = useNuxtApp();
 const route = useRoute();
-const runtimeConfig = useRuntimeConfig();
 const currentUrl = computed(() => route.fullPath);
 const userProfile = ref({ id: null });
 const title = ref("Pollen Pass");
 const rail = ref(true);
-const zIndex = ref(999);
 const drawer = ref(true);
 const version = ref("2.0.0");
 const dialogVisible = ref(false);
@@ -249,10 +244,6 @@ const loading = ref(true);
 const showSideNav = ref(true);
 const excludeSideNav = ref(["/onboarding"]);
 const isAuthenticated = ref(false);
-
-const showProfileSetting = () => {
-  dialogVisible.value = true;
-};
 
 onMounted(async () => {
   if (excludeSideNav.value.includes(currentUrl.value)) {
@@ -263,22 +254,5 @@ onMounted(async () => {
   }, 800);
 });
 
-const showNavMobile = () => {
-  drawer;
-};
-
-const onLogin = () => {
-  navigateTo("/auth/login");
-};
-
-const onSignUp = () => {
-  navigateTo("/auth/signup");
-};
-
 const onLogout = () => {};
-
-const getUserInfo = async (param) => {
-  try {
-  } catch (err) {}
-};
 </script>

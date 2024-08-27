@@ -9,7 +9,7 @@ export const useCountryStore = defineStore("country", {
   },
   actions: {
     async getCountries() {
-      const data = await ppApi(`/countries`);
+      const data = await ppApi("/countries");
       this.countries = data;
     },
     setCountries(param: never[]) {

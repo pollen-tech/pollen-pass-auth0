@@ -24,11 +24,12 @@ export default defineNuxtConfig({
     transpile: ["vuetify"],
   },
   modules: [
+    "@nuxt/eslint",
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error
+        // @ts-expect-error: Adding Vuetify plugin to Vite config despite TypeScript type issues
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
@@ -54,9 +55,6 @@ export default defineNuxtConfig({
       appName: "Pollen Pass",
       appVersion: "2.0.0",
       API_URL: "https://helix-sb.pollentech.cloud/user-onboard/api/v1", // "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev",
-      AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-      AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-      AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
       pollenLmsUrl: "https://lms-sb.pollentech.cloud",
       pollenDirectUrl: "https://direct-sb.pollentech.cloud/auth/login",
     },

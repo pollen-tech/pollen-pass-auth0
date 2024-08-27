@@ -30,11 +30,9 @@
             <div class="d-flex flex-column">
               {{ options.title }}
             </div>
-            <div
-              v-if="options.message"
-              class="text-caption my-2"
-              v-html="options.message"
-            ></div>
+            <div v-if="options.message" class="text-caption my-2">
+              {{ options.message }}
+            </div>
           </div>
         </div>
       </v-card-item>
@@ -47,7 +45,7 @@
             :prepend-icon="options.actionIcon1"
             variant="outlined"
             class="text-caption ma-1"
-            @click.native="cancel"
+            @click="cancel"
           />
 
           <v-btn
@@ -57,7 +55,7 @@
             :full-width="$vuetify.display.mobile"
             color="#8431e7"
             class="text-caption ma-1"
-            @click.native="agree"
+            @click="agree"
           />
         </div>
       </v-card-text>
@@ -69,15 +67,15 @@ export default {
   props: {
     label: {
       type: String,
-      default: '',
+      default: "",
     },
     badge: {
       type: String,
-      default: '',
+      default: "",
     },
     placeholder: {
       type: String,
-      default: '',
+      default: "",
     },
     default: {
       type: String,
@@ -93,16 +91,16 @@ export default {
       options: {
         message: null,
         title: null,
-        icon: '',
-        color: 'grey lighten-3',
+        icon: "",
+        color: "grey lighten-3",
         width: 420,
         zIndex: 200,
         noconfirm: false,
         rejection: false,
-        actionText1: '',
-        actionText2: '',
-        actionIcon1: '',
-        actionIcon2: '',
+        actionText1: "",
+        actionText2: "",
+        actionIcon1: "",
+        actionIcon2: "",
       },
     };
   },
