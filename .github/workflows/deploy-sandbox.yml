@@ -45,16 +45,16 @@ jobs:
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SB_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SB_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SB_AWS_S3_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SB_AWS_S3_SECRET_ACCESS_KEY }}
           AWS_REGION: "ap-southeast-1" # optional: defaults to us-east-1
           SOURCE_DIR: ".output/public"
 
-        - name: Invalidate CloudFront
-          uses: chetan/invalidate-cloudfront-action@v2
-          env:
-            PATHS: "/*"
-            AWS_REGION: "ap-southeast-1"
-            DISTRIBUTION: ${{ secrets.SB_CLOUDFRONT_DISTRIBUTION }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.SB_AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.SB_AWS_SECRET_ACCESS_KEY }}
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          PATHS: "/*"
+          AWS_REGION: "ap-southeast-1"
+          DISTRIBUTION: ${{ secrets.SB_CLOUDFRONT_DISTRIBUTION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SB_AWS_CLOUDFRONT_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SB_AWS_CLOUDFRONT_SECRET_ACCESS_KEY }}
