@@ -1,0 +1,50 @@
+name: Build and Deploy to Production
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_S3_BUCKET: web.pollen-pass
+jobs:
+  deploy:
+    name: Deploy assets to Production S3
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [20]
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v2
+
+      - name: Setup node env
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: set-env
+        uses: allenevans/set-env@v2.0.0
+        with:
+          NUXT_USER_ONBOARD_API: ${{ secrets.SB_USER_ONBOARD_API }}
+          NUXT_POLLEN_LMS_URL: ${{ secrets.PROD_POLLEN_LMS_URL }}
+          NUXT_POLLEN_DIRECT_URL: ${{ secrets.PROD_POLLEN_DIRECT_URL }}
+      - name: Clean up
+        run: yarn clean:nuxt
+
+      - name: Build SPA
+        run: yarn generate
+
+      - name: Sync assets to Production S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-southeast-1" # optional: defaults to us-east-1
+          SOURCE_DIR: ".output/public"
