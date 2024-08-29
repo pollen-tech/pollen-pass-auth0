@@ -30,7 +30,7 @@ jobs:
       - name: set-env
         uses: allenevans/set-env@v2.0.0
         with:
-          NUXT_USER_ONBOARD_API: ${{ secrets.SB_USER_ONBOARD_API }}
+          NUXT_USER_ONBOARD_API: ${{ secrets.PROD_USER_ONBOARD_API }}
           NUXT_POLLEN_LMS_URL: ${{ secrets.PROD_POLLEN_LMS_URL }}
           NUXT_POLLEN_DIRECT_URL: ${{ secrets.PROD_POLLEN_DIRECT_URL }}
       - name: Clean up
