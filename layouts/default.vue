@@ -219,11 +219,6 @@
           @close="dialogVisible = false"
         />
       </div>
-      <v-footer class="pa-0 w-100 d-flex justify-end bg-transparent">
-        <p class="text-caption text-grey pr-4 pb-2">
-          {{ title }} v{{ version }}
-        </p>
-      </v-footer>
     </v-main>
   </v-layout>
 </template>
