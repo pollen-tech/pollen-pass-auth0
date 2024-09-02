@@ -233,7 +233,6 @@ const userProfile = ref({ id: null });
 const title = ref("Pollen Pass");
 const rail = ref(true);
 const drawer = ref(true);
-const version = ref("2.0.0");
 const dialogVisible = ref(false);
 const loading = ref(true);
 const showSideNav = ref(true);
