@@ -9,16 +9,32 @@
     >
       <div class="text-caption justify-center mb-12 d-flex">
         <img
+          v-if="channel === 'CH_LMS'"
           src="~/assets/images/pollen.svg"
           class="mx-4"
           style="width: 50px"
         />
-        <div>
+        <img
+          v-else
+          src="~/assets/images/pollen-direct.svg"
+          class="mx-4"
+          style="width: 50px"
+        />
+
+        <div v-if="channel === 'CH_LMS'">
           <p class="font-weight-bold" style="font-size: 14px">
-            {{ notification.title }}
+            {{ lms_notification.title }}
           </p>
           <p>
-            {{ notification.desc }}
+            {{ lms_notification.desc }}
+          </p>
+        </div>
+        <div v-else>
+          <p class="font-weight-bold" style="font-size: 14px">
+            {{ direct_notification.title }}
+          </p>
+          <p>
+            {{ direct_notification.desc }}
           </p>
         </div>
       </div>
@@ -84,7 +100,7 @@
           >
           <p class="red--text text-caption text-center">{{ error }}</p>
           <p class="text-green-lighten-1 text-caption text-center">
-            {{ notification.message }}
+            {{ submitted_message }}
           </p>
         </v-form>
       </v-card>
@@ -136,11 +152,18 @@ const config = useRuntimeConfig();
 const emit = defineEmits(["submit"]);
 
 const title = ref("Enter your information");
-const notification = ref({
+const lms_notification = ref({
   title: "How to Start Selling with Pollen's Liquidation Management System",
   desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
   message: "",
 });
+const direct_notification = ref({
+  title:
+    "Get exclusive access to the latest Pollen Direct liquidation inventory catalogs with Pollen Pass",
+  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
+  message: "",
+});
+const submitted_message = ref();
 const item = ref({ items: [] });
 const valid = ref(false);
 const rules = reactive({
@@ -176,8 +199,7 @@ const onValidateExistEmail = async () => {
     return;
   } else {
     error.value = "";
-    notification.value.message = "Form was submitted successfully";
-    isLoading.value = false;
+    submitted_message.value = "Form was submitted successfully";
   }
 
   const email = item.value.email;

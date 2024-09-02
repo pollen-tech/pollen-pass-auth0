@@ -219,11 +219,6 @@
           @close="dialogVisible = false"
         />
       </div>
-      <v-footer class="pa-0 w-100 d-flex justify-end bg-transparent">
-        <p class="text-caption text-grey pr-4 pb-2">
-          {{ title }} v{{ version }}
-        </p>
-      </v-footer>
     </v-main>
   </v-layout>
 </template>
@@ -238,7 +233,6 @@ const userProfile = ref({ id: null });
 const title = ref("Pollen Pass");
 const rail = ref(true);
 const drawer = ref(true);
-const version = ref("2.0.0");
 const dialogVisible = ref(false);
 const loading = ref(true);
 const showSideNav = ref(true);

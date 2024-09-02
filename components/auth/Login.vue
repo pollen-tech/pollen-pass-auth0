@@ -8,16 +8,32 @@
     >
       <div class="text-caption justify-center mb-12 d-flex">
         <img
+          v-if="channel === 'CH_LMS'"
           src="~/assets/images/pollen.svg"
           class="mx-4"
           style="width: 50px"
         />
-        <div>
+        <img
+          v-else
+          src="~/assets/images/pollen-direct.svg"
+          class="mx-4"
+          style="width: 50px"
+        />
+
+        <div v-if="channel === 'CH_LMS'">
           <p class="font-weight-bold" style="font-size: 14px">
-            {{ notification.title }}
+            {{ lms_notification.title }}
           </p>
           <p>
-            {{ notification.desc }}
+            {{ lms_notification.desc }}
+          </p>
+        </div>
+        <div v-else>
+          <p class="font-weight-bold" style="font-size: 14px">
+            {{ direct_notification.title }}
+          </p>
+          <p>
+            {{ direct_notification.desc }}
           </p>
         </div>
       </div>
@@ -110,6 +126,8 @@
 
 <script setup>
 import { ref } from "vue";
+import { useAuth } from "@/composables/auth0";
+
 //import { useSellerStore } from "@/store/seller";
 //import { useCountryStore } from "@/store/country";
 
@@ -120,12 +138,20 @@ const emit = defineEmits(["submit"]);
 
 //const sellerStore = useSellerStore();
 
+const auth = useAuth();
+const channel = computed(() => auth.get_channel());
+
 const title = ref("Login");
 const desc = ref("Login to your Pollen Pass account");
 
-const notification = ref({
+const lms_notification = ref({
   title: "How to Start Selling with Pollen's Liquidation Management System",
   desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
+});
+const direct_notification = ref({
+  title:
+    "Get exclusive access to the latest Pollen Direct liquidation inventory catalogs with Pollen Pass",
+  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
 });
 const email = ref("");
 //const rules = reactive({
