@@ -297,7 +297,7 @@ const returnToSignup = () => {
 };
 
 const getErrorMessage = (req) => {
-  let errorMsg = req.message || req.desc;
+  let errorMsg = req.message || "OTP is not valid";
   if (req.message !== undefined && typeof req.message !== "string") {
     const formattedMessages = req.message.map((message) => {
       const words = message.split(" ");
