@@ -151,6 +151,7 @@ const config = useRuntimeConfig();
 
 const emit = defineEmits(["submit"]);
 
+const channel = computed(() => get_channel());
 const title = ref("Enter your information");
 const lms_notification = ref({
   title: "How to Start Selling with Pollen's Liquidation Management System",
@@ -183,7 +184,7 @@ const showDialog = () => {
   console.log("showDialog");
   dialogStore.showDialog(
     "Email address already exist",
-    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>',
+    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>'
   );
 };
 
@@ -212,7 +213,7 @@ const onValidateExistEmail = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -258,7 +259,7 @@ const submit = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {
