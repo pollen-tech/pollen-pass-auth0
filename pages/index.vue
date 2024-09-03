@@ -71,7 +71,7 @@ const isAuthenticated = ref(false);
 const show_login = ref(true);
 
 const showDialog = async () => {
-  if (isAuthenticated.value) {
+  if (!isAuthenticated.value) {
     const options = {
       title: "User cannot Sign Up without channel",
       message:
@@ -88,7 +88,7 @@ const showDialog = async () => {
     } else {
       navigateTo(
         runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""),
-        { external: true },
+        { external: true }
       );
     }
   }
@@ -98,7 +98,7 @@ onMounted(() => {
   show_login.value = false;
   const router = useRouter();
   const searchParams = new URLSearchParams(
-    router.currentRoute.value.fullPath.split("?")[1],
+    router.currentRoute.value.fullPath.split("?")[1]
   );
 
   const channel = searchParams.get("channel");
