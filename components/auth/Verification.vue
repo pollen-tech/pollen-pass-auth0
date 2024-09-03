@@ -126,6 +126,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <NotificationStatus />
     </div>
   </div>
 </template>
@@ -136,10 +137,13 @@ import { useRuntimeConfig } from "#app";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 import { lmsApi } from "~/services/api";
+import { useCommonStore } from "~/store/common";
 
 const auth = useAuth();
 const userStore = useUserStore();
 const user = userStore.getUser();
+
+const commonStore = useCommonStore();
 
 const data = ref(null);
 const error = ref(null);
@@ -202,8 +206,13 @@ const submit = async () => {
       } else {
         navigateTo("/auth/otp");
       }
+    } else {
+      console.log(req);
+      getErrorMessage(req);
     }
   } catch (err) {
+    console.log(err);
+    getErrorMessage(err);
     console.log(err);
     error.value = "Failed to fetch data";
   }
@@ -287,6 +296,24 @@ const returnToSignup = () => {
   window.location.href = "/auth/login";
 };
 
+const getErrorMessage = (req) => {
+  let errorMsg = req.message || req.desc;
+  if (req.message !== undefined && typeof req.message !== "string") {
+    const formattedMessages = req.message.map((message) => {
+      const words = message.split(" ");
+      words[0] = "• " + words[0];
+      return words.join(" ");
+    });
+
+    errorMsg = formattedMessages.join(",<br/>");
+  }
+
+  commonStore.setShowNotification({
+    display: true,
+    status: "error",
+    msg: errorMsg,
+  });
+};
 onUpdated(() => {
   if (emailLocal) {
     remainingTime.value = totalTime.value;
