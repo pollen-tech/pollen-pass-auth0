@@ -215,6 +215,8 @@ export default {
         });
 
         if (!response.ok) {
+          response.message = "Something went wrong while sending OTP";
+          this.getErrorMessage(response);
           throw new Error("Network response was not ok");
         }
         this.isOtpPage = true;
@@ -231,7 +233,7 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-          },
+          }
         );
 
         if (!response.ok) {
@@ -264,10 +266,12 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          },
+          }
         );
 
         if (!response.ok) {
+          response.message = "OTP is not valid";
+          this.getErrorMessage(response);
           throw new Error("Network response was not ok");
         }
         //this.data.value = await response.json();
