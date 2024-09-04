@@ -184,7 +184,7 @@ const showDialog = () => {
   console.log("showDialog");
   dialogStore.showDialog(
     "Email address already exist",
-    'Looks like the email address you are about to register already exist. for assistance please send us a message at <a href="mailto:cs@pollen.tech">cs@pollen.tech.</a>'
+    'Looks like the email address you are about to register already exist. for assistance please send us a message at cs@pollen.tech.'
   );
 };
 
