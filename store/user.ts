@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { userOnboardApi } from "~/services/api";
 
 interface User {
   user_id: string;
@@ -14,6 +15,7 @@ export const useUserStore = defineStore("user", {
   state: (): { user: User | null } => {
     return {
       user: null,
+      user_profile: null,
     };
   },
   actions: {
@@ -23,6 +25,12 @@ export const useUserStore = defineStore("user", {
     },
     getUser(): User | null {
       return this.user;
+    },
+
+    async get_user_profile(param: any) {
+      const req = await userOnboardApi(`/users/${param}`);
+      this.user_profile = req.data || req;
+      return req;
     },
   },
 });

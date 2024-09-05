@@ -30,7 +30,7 @@ export const ppApi = async (
   }
 };
 
-export const auth0 = async (
+export const userOnboardApi = async (
   url: string,
   method = "GET",
   data: Record<string, any> = {},
@@ -48,10 +48,8 @@ export const auth0 = async (
   }
 
   try {
-    const fetchData = await fetch(
-      new URL(url, config.public.adminApiUrl),
-      init,
-    );
+    const combinedUrl = new URL(config.public.API_URL.replace(/\/$/, "") + url);
+    const fetchData = await fetch(combinedUrl, init);
 
     if (fetchData.status !== 204) {
       return await fetchData.json();

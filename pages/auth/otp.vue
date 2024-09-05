@@ -82,12 +82,15 @@
 <script>
 import { useCommonStore } from "~/store/common";
 import { useUserStore } from "~/store/user";
+import { useAuth } from "@/composables/auth0";
 
 export default {
   middleware: ["keycloak"],
   setup(_props) {
+    const auth = useAuth();
     const commonStore = useCommonStore();
     const userStore = useUserStore();
+    const { get_user_profile } = userStore;
     const config = useRuntimeConfig();
     const data = ref(null);
     const error = ref(null);
@@ -96,7 +99,17 @@ export default {
     const user = userStore.getUser();
     const emailLocal = user?.email || localStorage.getItem("email");
 
-    return { commonStore, userStore, config, data, error, loading, emailLocal };
+    return {
+      commonStore,
+      userStore,
+      config,
+      data,
+      error,
+      loading,
+      emailLocal,
+      auth,
+      get_user_profile,
+    };
   },
   data: () => ({
     leftText: "Back to Pollen Direct",
@@ -126,16 +139,14 @@ export default {
   computed: {},
   async mounted() {
     this.config = useRuntimeConfig();
-    console.log("runtime", this.config.public);
-    console.log(this.id);
     this.isPhoneExist = false;
-
-    if (this.id) {
-      const userData = await this.getUserInfo(this.id);
-      this.user = userData;
+    const user_id = this.auth.get_user_id();
+    if (this.id || user_id) {
+      const { data } = await this.get_user_profile(this.id || user_id);
+      this.user = data;
     }
 
-    if (this.user.phoneVerified) {
+    if (this.user.phone_verified) {
       navigateTo("/auth/success");
     }
   },
@@ -183,12 +194,6 @@ export default {
       this.isPhoneExist = false;
       console.log(this.user);
       this.isOtpPage = false;
-    },
-    async getUserInfo(referenceId) {
-      const url = `${this.config.public.ppBackendUrl}/user/reference/${referenceId}`;
-      const keyCloakData = await api(url);
-
-      return keyCloakData;
     },
     async resendOtp() {
       this.sendOtp(this.otpType);
@@ -273,7 +278,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         if (!response.ok) {
