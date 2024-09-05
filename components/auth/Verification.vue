@@ -185,6 +185,7 @@ const submit = async () => {
       last_name: lastName,
       incoming_channel: channel_code,
     };
+    console.log('body: ', body);
     const req = await lmsApi(
       "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
