@@ -49,7 +49,7 @@ const login = () => {
 const contactCS = () => {
   console.log("Contact CS button clicked");
   dialogStore.hideDialog();
-  window.location.href = "mailto:cs@pollen.tech";
+  window.location.href = "mailto:contact@pollen.tech";
 };
 
 const hideDialog = () => {
