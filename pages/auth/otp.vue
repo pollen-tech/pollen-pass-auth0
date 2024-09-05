@@ -230,7 +230,13 @@ export default {
       }
     },
     async sendWelcomeEmail(user_id) {
+      const channel_code = user.channelCode;
+
       try {
+        const body = {
+          incoming_channel: channel_code,
+        };
+        console.log('body: ', body);
         const response = await fetch(
           `${this.config.public.API_URL}/users/${user_id}/welcome-email`,
           {
@@ -238,7 +244,8 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-          },
+            body: JSON.stringify(body),
+          }
         );
 
         if (!response.ok) {
