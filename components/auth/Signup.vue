@@ -184,7 +184,7 @@ const showDialog = () => {
   console.log("showDialog");
   dialogStore.showDialog(
     "Email address already exist",
-    'Looks like the email address you are about to register already exist. For assistance please send us a message at contact@pollen.tech.'
+    "Looks like the email address you are about to register already exist. For assistance please send us a message at contact@pollen.tech.",
   );
 };
 
@@ -213,7 +213,7 @@ const onValidateExistEmail = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -259,7 +259,7 @@ const submit = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {

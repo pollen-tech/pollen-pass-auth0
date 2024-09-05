@@ -238,7 +238,7 @@ export default {
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -271,7 +271,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         if (!response.ok) {

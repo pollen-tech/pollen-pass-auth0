@@ -188,7 +188,7 @@ const submit = async () => {
     const req = await lmsApi(
       "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
-      body
+      body,
     );
     isLoading.value = false;
     if (req.user_id) {
@@ -239,7 +239,7 @@ const formatTime = computed(() => {
   const seconds = remainingTime.value % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
-    "0"
+    "0",
   )}`;
 });
 
@@ -279,7 +279,7 @@ const resendEmailOtp = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
