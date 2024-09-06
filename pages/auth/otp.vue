@@ -230,7 +230,7 @@ export default {
       }
     },
     async sendWelcomeEmail(user_id) {
-      const channel_code = this.user.channelCode;
+      const channel_code = get_channel();
       console.log('channel_code: ', channel_code);
 
       try {
@@ -326,6 +326,12 @@ export default {
     },
     goToPrevious() {
       navigateTo("/auth/login");
+    },
+    get_channel() {
+      if (typeof window !== "undefined") {
+        const channel = localStorage.getItem("channel");
+        return channel;
+      }
     },
   },
 };
