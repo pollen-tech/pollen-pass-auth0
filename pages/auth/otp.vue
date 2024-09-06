@@ -230,7 +230,8 @@ export default {
       }
     },
     async sendWelcomeEmail(user_id) {
-      const channel_code = user.channelCode;
+      const channel_code = this.user.channelCode;
+      console.log('channel_code: ', channel_code);
 
       try {
         const body = {
