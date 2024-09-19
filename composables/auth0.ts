@@ -16,6 +16,17 @@ export const useAuth = () => {
     }
   };
 
+  const cleanup_user_data = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user_signup");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("expires_at");
+      localStorage.removeItem("id_token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("email");
+    }
+  };
+
   const get_user_id = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("user_id");
@@ -78,5 +89,6 @@ export const useAuth = () => {
     get_expire_at,
     get_access_token,
     clear_localStorage,
+    cleanup_user_data,
   };
 };

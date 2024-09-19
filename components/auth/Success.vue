@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-sheet class="d-flex flex-column align-center">
+    <v-sheet v-if="otp_valid" class="d-flex flex-column align-center">
       <h3 class="font-weight-bold my-8">{{ componentTitle }}</h3>
 
       <div class="d-flex flex-column align-center">
@@ -39,135 +39,119 @@
               class="my-4 px-10 text-capitalize rounded-lg"
               @click="redirect"
             >
-              Go to Channel Onboarding
+              Proceed to
+              {{ channel === "CH_LMS" ? "LMS" : "Pollen Direct" }}
+              Onboarding
             </v-btn></v-sheet
           >
         </div>
       </div>
     </v-sheet>
+    <CommonConfirm ref="confirm" />
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 import moment from "moment";
 
-export default {
-  data: () => ({
-    componentTitle: "Welcome to Pollen Pass!",
-    user: {
-      name: "",
-      email: "",
-      phonenumber: "",
-      memberid: "",
-      createdate: "",
-    },
-    config: null,
-    clientId: null,
-    channel: null,
-  }),
-  computed: {
-    componentDescription() {
-      return `We will redirect you to ${
-        this.channel === "CH_LMS" ? "Pollen LMS" : "Pollen Direct"
-      } onboarding page in 5 second(s). If you are not automatically redirected, please click the button below.`;
-    },
-  },
-  async mounted() {
-    this.config = useRuntimeConfig();
-    const auth = useAuth();
-    const userStore = useUserStore();
-    this.channel = auth.get_channel();
+const componentTitle = ref("Welcome to Pollen Pass!");
+const user = ref({
+  name: "",
+  email: "",
+  phonenumber: "",
+  memberid: "",
+  createdate: "",
+});
+const config = ref(null);
+const channel = ref(null);
+const confirm = ref(null);
+const otp_valid = ref(false);
 
-    console.log(userStore);
-    console.log(userStore.getUser());
-    const userId = userStore.getUser()?.user_id || auth.get_user_id();
-    await this.fetchUserInfo(userId);
+const userStore = useUserStore();
+const { get_user_profile } = userStore;
+const auth = useAuth();
 
-    console.log("this.channel: ", this.channel);
+const componentDescription = computed(() => {
+  return `We will redirect you to ${
+    channel.value === "CH_LMS" ? "Pollen LMS" : "Pollen Direct"
+  } onboarding page in 5 second(s). If you are not automatically redirected, please click the button below.`;
+});
 
-    //const userData = await this.getUserInfo();
-    //const originalDate = new Date(userData.createdAt);
+onMounted(async () => {
+  config.value = useRuntimeConfig();
+  channel.value = auth.get_channel();
 
-    //const formattedDate = `${(originalDate.getMonth() + 1)
-    //  .toString()
-    //  .padStart(2, "0")}/
-    //    ${originalDate
-    //      .getDate()
-    //      .toString()
-    //      .padStart(2, "0")}/
-    //    ${originalDate.getFullYear()}`;
-    //this.user = {
-    //  name: `${userData.firstName} ${userData.lastName}`,
-    //  email: userData.email,
-    //  phonenumber: userData.phone,
-    //  memberid: userData.id,
-    //  createdate: formattedDate,
-    //};
+  const userId = userStore.getUser()?.user_id || auth.get_user_id();
+  await fetchUserInfo(userId);
+});
 
-    //const savedKeycloak = localStorage.getItem("keycloak") || this.keycloak;
-    //const clientId =
-    //  JSON.parse(savedKeycloak)?.clientId || savedKeycloak?.clientId;
-    //this.clientId = clientId;
-  },
-  methods: {
-    //async getUserInfo() {
-    //  const url = `${this.config.public.backendUrl}/user/reference/${this.id}`;
-    //  const keyCloakData = await api(url);
+const fetchUserInfo = async (userId) => {
+  try {
+    const response = await get_user_profile(userId);
+    if (response.status_code == "OK") {
+      const userData = response?.data || {};
 
-    //  return keyCloakData;
-    //},
-    async fetchUserInfo(userId) {
-      try {
-        const response = await fetch(
-          `${this.config.public.API_URL}/users/${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const userDataJson = await response.json();
-        const userData = userDataJson?.data || userData;
-        console.log(userData);
-        //const originalDate = new Date(userData.createdAt);
+      if (!userData.phone_no) {
+        show_validate_phone();
+        otp_valid.value = false;
+      } else {
         const formattedDate = moment(userData.created_at).format("DD/MM/YYYY");
-        this.user = {
-          name: `${userData.first_name} ${userData.last_name}`,
+        otp_valid.value = true;
+
+        console.log(userData);
+        user.value = {
+          name: `${userData.first_name || "-"} ${userData.last_name || "-"}`,
           email: userData.email,
           phonenumber: `+${userData.country_code} ${userData.phone_no}`,
           memberid: userData.pollen_pass_id,
           createdate: formattedDate,
         };
-        console.log("user: ", this.user);
-      } catch (error) {
-        console.error("Failed to fetch user info:", error);
       }
-    },
-    redirect() {
-      const runtimeConfig = useRuntimeConfig();
-      const auth = useAuth();
-      const channel = auth.get_channel();
-      let redirect_url = "";
+    }
+  } catch (error) {
+    console.error("Failed to fetch user info:", error);
+  }
+};
 
-      if (channel === "CH_DIRECT") {
-        redirect_url = runtimeConfig.public.pollenDirectUrl;
-      } else {
-        redirect_url = runtimeConfig.public.pollenLmsUrl;
-      }
+const show_validate_phone = async () => {
+  const options = {
+    title: "User OTP phone validation is not complete",
+    message:
+      "Please complete the OTP phone validation before accessing this page.",
+    icon: "mdi-lightbulb-on-20",
+    color: "purple darken-2",
+    actionText1: "Go to login",
+    actionText2: "Go to OTP",
+    actionIcon2: "",
+    hideClose: true,
+    rejection: false,
+  };
+  if (await confirm.value.open(options)) {
+    navigateTo("/auth/otp");
+  } else {
+    navigateTo("/auth/login");
+  }
+};
 
-      const url = new URL(redirect_url);
-      url.searchParams.append("user_id", auth.get_user_id());
-      url.searchParams.append("access_token", auth.get_access_token());
-      url.searchParams.append("expires_at", auth.get_expire_at());
-      navigateTo(url.toString(), { external: true });
-    },
-  },
+const redirect = () => {
+  const runtimeConfig = useRuntimeConfig();
+  const channelValue = auth.get_channel();
+  let redirect_url = "";
+
+  if (channelValue === "CH_DIRECT") {
+    redirect_url = runtimeConfig.public.pollenDirectUrl;
+  } else {
+    redirect_url = runtimeConfig.public.pollenLmsUrl;
+  }
+
+  const url = new URL(redirect_url);
+  url.searchParams.append("user_id", auth.get_user_id());
+  url.searchParams.append("access_token", auth.get_access_token());
+  url.searchParams.append("expires_at", auth.get_expire_at());
+  navigateTo(url.toString(), { external: true });
 };
 </script>
 

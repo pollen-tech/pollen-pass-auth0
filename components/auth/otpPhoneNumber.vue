@@ -77,13 +77,13 @@
                 <div class="text-body-2 my-6">Send OTP via SMS</div>
               </template></v-radio
             >
-            <v-divider />
-            <v-radio value="2" color="#8431E7" :disabled="!phoneValid">
+            <!-- <v-divider /> -->
+            <!-- <v-radio value="2" color="#8431E7" :disabled="!phoneValid">
               <template #label>
                 <div class="text-body-2 my-6">Send OTP via Whatsapp</div>
               </template>
             </v-radio>
-            <v-divider />
+            <v-divider /> -->
             <p class="font-weight-bold text-center my-4 text-body-2">OR</p>
             <v-radio value="3" color="#8431E7" :disabled="!phoneValid">
               <template #label>
@@ -96,6 +96,7 @@
             block
             class="my-4 text-capitalize custom-button"
             :disabled="otpType === null"
+            :loading="isLoading"
             @click="sendOtpRequest"
             >Send OTP
           </v-btn>
@@ -154,6 +155,7 @@ export default {
       salesTeamNumber: "",
       config: null,
       otpType: null,
+      isLoading: false,
     };
   },
   mounted() {
@@ -179,6 +181,10 @@ export default {
       this.$emit("sendOtp", "call");
     },
     sendOtpRequest() {
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 2000);
       if (this.otpType === "1") {
         this.sendOtpViaSms();
       } else if (this.otpType === "2") {

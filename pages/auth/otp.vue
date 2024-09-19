@@ -51,7 +51,7 @@
           </v-row>
           <AuthOtpPhoneNumber
             v-if="!isOtpPage"
-            :phone="user.phone"
+            :phone="''"
             :is-phone-exist="isPhoneExist"
             :is-phone-save="isPhoneSave"
             @otp-event="getPhone"
@@ -79,261 +79,200 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import { useCommonStore } from "~/store/common";
 import { useUserStore } from "~/store/user";
 import { useAuth } from "@/composables/auth0";
+import { useRouter } from "vue-router";
 
-export default {
-  middleware: ["keycloak"],
-  setup(_props) {
-    const auth = useAuth();
-    const commonStore = useCommonStore();
-    const userStore = useUserStore();
-    const { get_user_profile } = userStore;
-    const config = useRuntimeConfig();
-    const data = ref(null);
-    const error = ref(null);
-    const loading = ref(true);
+definePageMeta({
+  middleware: "auth",
+});
+const router = useRouter();
+const auth = useAuth();
+const commonStore = useCommonStore();
+const userStore = useUserStore();
 
-    const user = userStore.getUser();
-    const emailLocal = user?.email || localStorage.getItem("email");
+const config = useRuntimeConfig();
 
-    return {
-      commonStore,
-      userStore,
-      config,
-      data,
-      error,
-      loading,
-      emailLocal,
-      auth,
-      get_user_profile,
-    };
-  },
-  data: () => ({
-    leftText: "Back to Pollen Direct",
-    rightText: "Sign Up",
-    notificationTitle: "Verify your email address",
-    notificationText:
-      "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Direct, buyers gain access to hundreds of catalogs across categories, and can make offers on overstock or near-expiry goods directly to global manufacturers.",
-    user: {},
-    show1: false,
-    show2: true,
-    password: "Password",
-    rules: {
-      required: (value) => !!value || "Required.",
-      min: (v) => v.length >= 8 || "Min 8 characters",
-      emailMatch: () => "The email and password you entered don't match",
-    },
-    confirmText: "Confirm phone number & send OTP",
-    enterOtp: "Enter Verification Code",
-    otp: null,
-    isOtpValid: true,
-    isOtpLoading: false,
-    isPhoneSave: false,
-    otpType: "",
-    isOtpPage: false,
-    isPhoneExist: false,
-  }),
-  computed: {},
-  async mounted() {
-    this.config = useRuntimeConfig();
-    this.isPhoneExist = false;
-    const user_id = this.auth.get_user_id();
-    if (this.id || user_id) {
-      const { data } = await this.get_user_profile(this.id || user_id);
-      this.user = data;
+const user = userStore.getUser();
+const emailLocal = computed(
+  () => user.value?.email || localStorage.getItem("email"),
+);
+
+const otp = ref(null);
+const isOtpValid = ref(true);
+const isOtpLoading = ref(false);
+const isPhoneSave = ref(false);
+const otpType = ref("");
+const isOtpPage = ref(false);
+const isPhoneExist = ref(false);
+
+onMounted(async () => {
+  isPhoneExist.value = false;
+  const user_id = auth.get_user_id();
+  if (auth.id || user_id) {
+    const { data: userProfile } = await userStore.get_user_profile(
+      auth.id || user_id,
+    );
+    user.value = userProfile;
+  }
+  if (user.value?.phone_verified) {
+    router.push("/auth/success");
+  }
+});
+
+const getPhone = (param) => {
+  user.value.phone = param;
+  savePhone(param);
+};
+
+const savePhone = async (_param) => {
+  // Logic to save phone
+};
+
+const verifyOtpLoading = () => {
+  isOtpLoading.value = true;
+};
+
+const goToPhoneNumberPage = () => {
+  otp.value = null;
+  isPhoneExist.value = false;
+  isOtpPage.value = false;
+};
+
+const resendOtp = async () => {
+  await sendOtp(otpType.value);
+};
+
+const sendOtp = async (type = "sms") => {
+  otpType.value = type;
+  const user = userStore.getUser();
+
+  const payload = {
+    country_code: parseInt(user.countryCode, 10),
+    phone_no: parseInt(user.phoneNumber, 10),
+    method: type,
+  };
+
+  try {
+    const response = await fetch(`${config.public.API_URL}/otp/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      mode: "cors",
+    });
+
+    if (!response.ok) {
+      response.message = "Something went wrong while sending OTP";
+      getErrorMessage(response);
+      throw new Error("Network response was not ok");
+    }
+    isOtpPage.value = true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const sendWelcomeEmail = async (user_id) => {
+  const channel_code = get_channel();
+  const body = {
+    incoming_channel: channel_code,
+  };
+
+  try {
+    const response = await fetch(
+      `${config.public.API_URL}/users/${user_id}/welcome-email`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    console.log("sent email", response, user_id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const verifyOtpEvent = async (otp) => {
+  const user_id =
+    typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
+  const user = userStore.getUser();
+  const payload = {
+    user_id: user.user_id || user_id,
+    country_code: parseInt(user.countryCode, 10),
+    phone_no: parseInt(user.phoneNumber, 10),
+    otp: otp,
+  };
+
+  try {
+    const response = await fetch(
+      `${config.public.API_URL}/otp/validate-user-otp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+
+    if (!response.ok) {
+      response.message = "OTP is not valid";
+      getErrorMessage(response);
+      throw new Error("Network response was not ok");
     }
 
-    if (this.user.phone_verified) {
-      navigateTo("/auth/success");
-    }
-  },
-  methods: {
-    getPhone(param) {
-      this.user.phone = param;
-      this.savePhone(param);
-    },
-    async savePhone(_param) {},
-    //async verifyOtp(param) {
-    //  this.otp = param;
-    //  this.isOtpValid = true;
-    //  const url = `${this.config.public.backendUrl}/otp/verify`;
-    //  const body = {
-    //    referenceId: this.user.referenceId,
-    //    otp: this.otp,
-    //  };
-    //  try {
-    //    const sendOtpCode = await api(url, "PATCH", body);
-    //    console.log(sendOtpCode);
-    //    if (
-    //      sendOtpCode === undefined ||
-    //      !sendOtpCode.statusCode ||
-    //      sendOtpCode.statusCode === 204 ||
-    //      sendOtpCode.statusCode === 200
-    //    ) {
-    //      setTimeout(() => {
-    //        navigateTo("/auth/success");
-    //      }, 2000);
-    //      this.isOtpValid = false;
-    //      this.isOtpLoading = false;
-    //    } else {
-    //      this.isOtpLoading = false;
-    //      this.getErrorMessage(sendOtpCode);
-    //    }
-    //  } catch (error) {
-    //    this.isOtpLoading = false;
-    //  }
-    //},
-    verifyOtpLoading() {
-      //this.isOtpLoading = true;
-    },
-    goToPhoneNumberPage() {
-      this.otp = null;
-      this.isPhoneExist = false;
-      console.log(this.user);
-      this.isOtpPage = false;
-    },
-    async resendOtp() {
-      this.sendOtp(this.otpType);
-    },
-    async sendOtp(type = "sms") {
-      console.log("sendSMS");
-      this.otpType = type;
-      const user = this.userStore.getUser();
+    isOtpPage.value = true;
+    await sendWelcomeEmail(user_id);
+    router.push("/auth/success");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-      const payload = {
-        country_code: parseInt(user.countryCode, 10),
-        phone_no: parseInt(user.phoneNumber, 10),
-        method: type,
-      };
+const getErrorMessage = (req) => {
+  isPhoneExist.value = false;
+  let errorMsg = req.message;
+  if (typeof req.message !== "string") {
+    const formattedMessages = req.message.map((message) => {
+      const words = message.split(" ");
+      words[0] = "• " + words[0];
+      return words.join(" ");
+    });
 
-      try {
-        const response = await fetch(`${this.config.public.API_URL}/otp/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-          mode: "cors",
-        });
+    errorMsg = formattedMessages.join(",<br/>");
+  }
+  if (errorMsg === "Phone number exist") {
+    isPhoneExist.value = true;
+  }
+  commonStore.setShowNotification({
+    display: true,
+    status: "error",
+    msg: errorMsg,
+  });
+};
 
-        if (!response.ok) {
-          response.message = "Something went wrong while sending OTP";
-          this.getErrorMessage(response);
-          throw new Error("Network response was not ok");
-        }
-        this.isOtpPage = true;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async sendWelcomeEmail(user_id) {
-      const channel_code = this.get_channel();
-      console.log('channel_code: ', channel_code);
+const updateIsPhoneSave = (value) => {
+  isPhoneSave.value = value;
+};
 
-      try {
-        const body = {
-          incoming_channel: channel_code,
-        };
-        console.log('body: ', body);
-        const response = await fetch(
-          `${this.config.public.API_URL}/users/${user_id}/welcome-email`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          }
-        );
+const goToPrevious = () => {
+  window.location.href = "/auth/login";
+};
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        console.log("sent email");
-        console.log(response);
-        console.log(user_id);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async verifyOtpEvent(otp) {
-      //console.log('verifyOtpEvent: ', otp, this.userStore.getUser().user_id);
-      const user_id =
-        typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
-      const user = this.userStore.getUser();
-      const payload = {
-        user_id: user.user_id || user_id,
-        country_code: parseInt(user.countryCode, 10),
-        phone_no: parseInt(user.phoneNumber, 10),
-        otp: otp,
-      };
-      try {
-        const response = await fetch(
-          `${this.config.public.API_URL}/otp/validate-user-otp`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          },
-        );
-
-        if (!response.ok) {
-          response.message = "OTP is not valid";
-          this.getErrorMessage(response);
-          throw new Error("Network response was not ok");
-        }
-        //this.data.value = await response.json();
-        this.isOtpPage = true;
-        this.sendWelcomeEmail(user_id);
-        //console.log('auth/success');
-        //console.log(response);
-        //console.log(user_id);
-
-        navigateTo("/auth/success");
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    getErrorMessage(req) {
-      this.isPhoneExist = false;
-      let errorMsg = req.message;
-      if (typeof req.message !== "string") {
-        const formattedMessages = req.message.map((message) => {
-          const words = message.split(" ");
-          words[0] = "• " + words[0];
-          return words.join(" ");
-        });
-
-        errorMsg = formattedMessages.join(",<br/>");
-      }
-      if (errorMsg === "Phone number exist") {
-        this.isPhoneExist = true;
-      }
-      this.commonStore.setShowNotification({
-        display: true,
-        status: "error",
-        msg: errorMsg,
-      });
-    },
-    updateIsPhoneSave(value) {
-      this.isPhoneSave = value;
-    },
-    goToPrevious() {
-      navigateTo("/auth/login");
-    },
-    get_channel() {
-      if (typeof window !== "undefined") {
-        const channel = localStorage.getItem("channel");
-        return channel;
-      }
-    },
-  },
+const get_channel = () => {
+  return typeof window !== "undefined" ? localStorage.getItem("channel") : null;
 };
 </script>
 

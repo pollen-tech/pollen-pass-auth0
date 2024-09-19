@@ -1,6 +1,5 @@
 <template>
   <div>
-    <CommonLoading v-if="isLoading" :loading="true" />
     <div
       class="d-flex flex-column align-center mx-16"
       :style="{
@@ -38,118 +37,100 @@
           </p>
         </div>
       </div>
-      <h3 style="font-size: 20px">{{ title }}</h3>
-
+      <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
         elevation="0"
         class="align-center my-4"
       >
-        <v-form ref="formRef" v-model="valid" lazy-validation>
-          <div class="my-4 text-start flex-1-0">
-            <label class="font-weight-medium"
-              >First Name<span class="red--text">*</span>
+        <v-form ref="formRef" v-model="form_valid" lazy-validation>
+          <div class="my-2 text-start flex-1-0">
+            <label class="font-weight-medium" style="font-size: 14px"
+              >First Name
+              <span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.firstName"
               variant="outlined"
               placeholder="Eg. Kevin"
-              :rules="rules.required"
+              :rules="required"
               class="custom-text-field"
               autocomplete="given-name"
             />
           </div>
 
-          <div class="my-4 text-start flex-1-0">
-            <label class="font-weight-medium"
-              >Last Name<span class="red--text">*</span>
+          <div class="my-2 text-start flex-1-0">
+            <label class="font-weight-medium" style="font-size: 14px"
+              >Last Name
+              <span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.lastName"
               variant="outlined"
               placeholder="Eg. King"
-              :rules="rules.required"
+              :rules="required"
               class="custom-text-field"
               autocomplete="family-name"
             />
           </div>
 
-          <div class="my-4 text-start flex-1-0">
-            <label class="font-weight-medium"
-              >Email<span class="red--text">*</span>
+          <div class="my-2 text-start flex-1-0">
+            <label class="font-weight-medium" style="font-size: 14px"
+              >Email
+              <span class="red--text">*</span>
             </label>
 
             <v-text-field
               v-model="item.email"
               variant="outlined"
-              :rules="[...rules.required, rules.email]"
+              placeholder="Enter Email"
+              :rules="required_email"
               class="custom-text-field"
               autocomplete="email"
             />
           </div>
-
           <v-btn
             class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
             :loading="isLoading"
-            @click="onValidateExistEmail()"
+            @click="submit_signup()"
             >Continue</v-btn
           >
+          <p class="text-center" style="color: #111827; font-size: 14px">
+            Already have Pollen Pass account ?
+            <a href="/auth/login" class="link">Sign In with Pollen Pass</a>
+          </p>
           <p class="red--text text-caption text-center">{{ error }}</p>
           <p class="text-green-lighten-1 text-caption text-center">
             {{ submitted_message }}
           </p>
         </v-form>
       </v-card>
-      <SmallDialog />
 
-      <!--<v-dialog
-        v-model="showDialog"
-        persistent
-        class="mx-auto pa-2"
-        :width="$vuetify.display.mobile ? 'auto' : '550'"
-      >
-        <v-card :title="dialogTitle">
-          <v-card-text>
-            <p>
-              Acknowledgment that the user has successfully filled out the
-              onboarding form, indicating readiness to proceed with the next
-              steps in the user journey.
-            </p>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              variant="outlined"
-              class="ma-2 text-capitalize"
-              href="/profile"
-              >Go to Profile</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>-->
+      <NotificationStatus />
+      <SmallDialog ref="confirm" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useUserStore } from "@/store/user";
-import { useRuntimeConfig } from "#app";
 import SmallDialog from "@/components/common/SmallDialog.vue";
-import { useDialogStore } from "@/store/dialog";
+import { useCommonStore } from "@/store/common";
 
-const dialogStore = useDialogStore();
 const userStore = useUserStore();
+const { validate_email_exist, verify_passwordless_email_login, cleanupUser } =
+  userStore;
 
-const data = ref(null);
+const common_store = useCommonStore();
+
 const error = ref(null);
-const config = useRuntimeConfig();
-
-const emit = defineEmits(["submit"]);
+const confirm = ref(null);
+const form_valid = ref(false);
 
 const channel = computed(() => get_channel());
 const title = ref("Enter your information");
@@ -166,115 +147,77 @@ const direct_notification = ref({
 });
 const submitted_message = ref();
 const item = ref({ items: [] });
-const valid = ref(false);
-const rules = reactive({
-  required: [(v) => !!v || "Field is required"],
-  //min: (v) => v.length >= 8 || "Min 8 characters",
-  email: [
-    (v) =>
-      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-      "E-mail must be valid",
-  ],
-});
+
 const formRef = ref(null);
 const isLoading = ref(false);
-//const showDialog = ref(false);
 
-const showDialog = () => {
-  console.log("showDialog");
-  dialogStore.showDialog(
-    "Email address already exist",
-    'Looks like the email address you are about to register already exist. For assistance please send us a message at contact@pollen.tech.'
-  );
-};
+const required_email = [
+  (v) => /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) || "Valid E-mail is required",
+];
+const required = [(v) => !!v || "Field is required"];
 
-const onValidateExistEmail = async () => {
-  isLoading.value = true;
-
-  const { valid } = await formRef.value.validate();
-
-  if (!valid) {
-    console.log("Form is invalid");
-    error.value = "Form is invalid";
-    isLoading.value = false;
-    return;
-  } else {
-    error.value = "";
-    submitted_message.value = "Form was submitted successfully";
-  }
-
-  const email = item.value.email;
-
+const validate_email_add_exist = async () => {
   try {
-    const response = await fetch(
-      `${config.public.API_URL}/users/pollen-pass-by-email/${email}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    data.value = await response.json();
-
-    console.log(data.value.status_code);
-
-    if (data.value.status_code === "OK") {
-      console.log("showDialog");
-      showDialog();
+    const req = await validate_email_exist(item.value.email);
+    if (req.status_code == "OK") {
+      const options = {
+        title: "Email address already exist?",
+        message:
+          "Looks like the email address you are about to register already exist. For assistance please send us a message at contact@pollen.tech",
+        icon: "",
+        color: "purple darken-2",
+        actionText1: "Login",
+        actionText2: "Contact CS",
+        actionIcon2: "",
+        rejection: false,
+      };
+      if (await confirm.value.open(options)) {
+        window.location.href = "mailto:contact@pollen.tech";
+      } else {
+        navigateTo("/auth/login");
+      }
+      return false;
     } else {
-      console.log("submit");
-      submit();
+      return true;
     }
-    isLoading.value = false;
   } catch (err) {
-    isLoading.value = false;
-    error.value = "Failed to fetch data";
     console.log(err);
   }
 };
 
-const submit = async () => {
-  emit("submit", item.value);
-  const user = {
-    email: item.value.email,
-    firstName: item.value.firstName,
-    lastName: item.value.lastName,
-    channelCode: get_channel(),
-  };
-  userStore.setUser(user);
-  console.log(get_channel());
-  console.log(user);
-  const email = item.value.email;
-
+const submit_signup = async () => {
   try {
-    const response = await fetch(
-      `${config.public.API_URL}/auth0/password-less-email-login/${email}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+    isLoading.value = true;
+    const { valid } = await formRef.value.validate();
+    if (valid) {
+      const valid_email = await validate_email_add_exist();
+      if (valid_email) {
+        const user = {
+          email: item.value.email,
+          firstName: item.value.firstName,
+          lastName: item.value.lastName,
+          channelCode: get_channel(),
+        };
+        userStore.setUser(user);
+        const verify_passwordless = await verify_passwordless_email_login(
+          item.value.email,
+        );
+        if (verify_passwordless.status_code != "LOGIN_ERROR") {
+          navigateTo("/auth/verification");
+        } else {
+          common_store.setShowNotification({
+            display: true,
+            status: "error",
+            msg: verify_passwordless,
+          });
+        }
+      }
+      isLoading.value = false;
+    } else {
+      isLoading.value = false;
     }
-    data.value = await response.json();
-
-    if (data.value.status_code === "LOGIN_ERROR") {
-      throw new Error("LOGIN ERROR");
-    }
-    isLoading.value = false;
-    navigateTo("/auth/verification");
   } catch (err) {
     isLoading.value = false;
-    error.value = "Failed to fetch data";
     console.log(err);
   }
 };
@@ -288,7 +231,9 @@ const get_channel = () => {
   }
 };
 
-onMounted(async () => {});
+onMounted(async () => {
+  cleanupUser();
+});
 </script>
 <style>
 .custom-icon > .v-overlay__content {
