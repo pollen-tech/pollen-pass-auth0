@@ -119,25 +119,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/store/user";
-import { useRuntimeConfig } from "#app";
 import SmallDialog from "@/components/common/SmallDialog.vue";
-import { useDialogStore } from "@/store/dialog";
 import { useCommonStore } from "@/store/common";
 
-const dialogStore = useDialogStore();
 const userStore = useUserStore();
 const { validate_email_exist, verify_passwordless_email_login, cleanupUser } =
   userStore;
 
 const common_store = useCommonStore();
 
-const data = ref(null);
 const error = ref(null);
-const config = useRuntimeConfig();
 const confirm = ref(null);
 const form_valid = ref(false);
-
-const emit = defineEmits(["submit"]);
 
 const channel = computed(() => get_channel());
 const title = ref("Enter your information");
@@ -168,7 +161,7 @@ const validate_email_add_exist = async () => {
     const req = await validate_email_exist(item.value.email);
     if (req.status_code == "OK") {
       const options = {
-        title: `Email address already exist?`,
+        title: "Email address already exist?",
         message:
           "Looks like the email address you are about to register already exist. For assistance please send us a message at contact@pollen.tech",
         icon: "",
@@ -207,7 +200,7 @@ const submit_signup = async () => {
         };
         userStore.setUser(user);
         const verify_passwordless = await verify_passwordless_email_login(
-          item.value.email
+          item.value.email,
         );
         if (verify_passwordless.status_code != "LOGIN_ERROR") {
           navigateTo("/auth/verification");

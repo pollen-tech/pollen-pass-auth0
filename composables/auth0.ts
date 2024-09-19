@@ -11,7 +11,7 @@ export const useAuth = () => {
       localStorage.setItem("user_id", response?.user_id);
       localStorage.setItem(
         "expires_at",
-        JSON.stringify(response.expires_in * 1000 + new Date().getTime())
+        JSON.stringify(response.expires_in * 1000 + new Date().getTime()),
       );
     }
   };

@@ -93,7 +93,7 @@ const showDialog = async () => {
     } else {
       navigateTo(
         runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""),
-        { external: true }
+        { external: true },
       );
     }
   }
@@ -103,7 +103,7 @@ onMounted(() => {
   show_login.value = false;
   const router = useRouter();
   const searchParams = new URLSearchParams(
-    router.currentRoute.value.fullPath.split("?")[1]
+    router.currentRoute.value.fullPath.split("?")[1],
   );
 
   const channel = searchParams.get("channel");

@@ -44,7 +44,7 @@ export const useUserStore = defineStore("user", {
 
     async validate_email_exist(param_email: any) {
       const req = await userOnboardApi(
-        `/users/pollen-pass-by-email/${param_email}`
+        `/users/pollen-pass-by-email/${param_email}`,
       );
       return req;
     },
@@ -52,7 +52,7 @@ export const useUserStore = defineStore("user", {
     async verify_passwordless_email_login(param_email: any) {
       const req = await userOnboardApi(
         `/auth0/password-less-email-login/${param_email}`,
-        "POST"
+        "POST",
       );
       return req;
     },

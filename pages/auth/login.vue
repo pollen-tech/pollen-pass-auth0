@@ -28,7 +28,7 @@ import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 
 const userStore = useUserStore();
-const { user, getUserLocalStorage, cleanupUser } = userStore;
+const { user, getUserLocalStorage } = userStore;
 
 const auth = useAuth();
 const { cleanup_user_data } = auth;
@@ -59,7 +59,7 @@ const send_otp = async (param) => {
     email.value = param;
     const req = await lmsApi(
       `/auth0/password-less-email-login/${email.value}`,
-      "POST"
+      "POST",
     );
     if (req) {
       const user = {
