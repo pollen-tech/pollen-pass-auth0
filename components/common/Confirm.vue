@@ -18,7 +18,6 @@
               >
                 <v-icon color="#8431E7" class="ma-2" :icon="options.icon" />
               </div>
-
               <v-spacer />
               <v-btn
                 v-if="!options.hideClose"
@@ -123,9 +122,6 @@ export default {
     },
     cancel() {
       this.resolve(false);
-      this.dialog = false;
-    },
-    hideDialog() {
       this.dialog = false;
     },
   },
