@@ -18,14 +18,6 @@
               >
                 <v-icon color="#8431E7" class="ma-2" :icon="options.icon" />
               </div>
-
-              <v-spacer />
-              <v-btn
-                variant="plain"
-                icon="mdi-close"
-                class="ma-2 floating-close-btn"
-                @click="hideDialog"
-              />
             </div>
             <div class="d-flex flex-column">
               {{ options.title }}
@@ -121,9 +113,6 @@ export default {
     },
     cancel() {
       this.resolve(false);
-      this.dialog = false;
-    },
-    hideDialog() {
       this.dialog = false;
     },
   },
