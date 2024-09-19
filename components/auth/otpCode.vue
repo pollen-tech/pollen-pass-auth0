@@ -49,6 +49,7 @@
           class="my-4 me-auto custom-button text-capitalize"
           color="#8431E7"
           :disabled="otp.length < otpLength || isOtpLoading"
+          :loading="isLoading"
           @click="sendPhoneNumber"
           >Continue</v-btn
         >
@@ -90,6 +91,7 @@ export default {
       timerRunning: false,
       timerInterval: null,
       config: null,
+      isLoading: false,
     };
   },
   computed: {
@@ -98,7 +100,7 @@ export default {
       const seconds = this.remainingTime % 60;
       return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
         2,
-        "0",
+        "0"
       )}`;
     },
   },
@@ -108,6 +110,10 @@ export default {
   },
   methods: {
     sendPhoneNumber() {
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 2000);
       console.log("sendPhoneNumber: ", this.otp);
       this.$emit("setOtpLoading", true);
 

@@ -21,13 +21,14 @@
 
               <v-spacer />
               <v-btn
+                v-if="!options.hideClose"
                 variant="plain"
                 icon="mdi-close"
                 class="ma-2 floating-close-btn"
                 @click="hideDialog"
               />
             </div>
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column mt-2">
               {{ options.title }}
             </div>
             <div v-if="options.message" class="text-caption my-2">
@@ -101,6 +102,7 @@ export default {
         actionText2: "",
         actionIcon1: "",
         actionIcon2: "",
+        hideClose: false,
       },
     };
   },

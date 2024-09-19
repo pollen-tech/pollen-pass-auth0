@@ -61,6 +61,10 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/auth0";
+import { useUserStore } from "@/store/user";
+
+const userStore = useUserStore();
+const { cleanupUser } = userStore;
 
 const auth = useAuth();
 const confirm = ref(null);
@@ -81,6 +85,7 @@ const showDialog = async () => {
       actionText1: "Go To Pollen Direct (Buyer)",
       actionText2: "Go To LMS (Seller)",
       actionIcon2: "",
+      hideClose: true,
       rejection: false,
     };
     if (await confirm.value.open(options)) {
@@ -88,7 +93,7 @@ const showDialog = async () => {
     } else {
       navigateTo(
         runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""),
-        { external: true },
+        { external: true }
       );
     }
   }
@@ -98,13 +103,14 @@ onMounted(() => {
   show_login.value = false;
   const router = useRouter();
   const searchParams = new URLSearchParams(
-    router.currentRoute.value.fullPath.split("?")[1],
+    router.currentRoute.value.fullPath.split("?")[1]
   );
 
   const channel = searchParams.get("channel");
   const action = searchParams.get("action");
 
   auth.clear_localStorage();
+  cleanupUser();
   if (!channel) {
     localStorage.removeItem("channel");
     showDialog();

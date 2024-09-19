@@ -89,7 +89,7 @@
             >Sign in</v-btn
           >
           <p class="text-center" style="color: #111827; font-size: 14px">
-            Want to access Pollen LMS?
+            Want to access Pollen Pass?
             <a href="/auth/signup" class="link">Sign Up with Pollen Pass</a>
           </p>
         </v-form>
@@ -154,25 +154,9 @@ const direct_notification = ref({
   desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
 });
 const email = ref("");
-//const rules = reactive({
-//  required: (value) => !!value || "Required.",
-//  min: (v) => v.length >= 8 || "Min 8 characters",
-//  emailMatch: () => `The email and password you entered don't match`,
-//});
 const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
-//const validateCompanyName = ref(0);
-//const selectedItem = ref(null);
-//const checkAcceptTerms = ref(false);
-
-//const fetchCity = async (val) => {
-//  items.value.city = null;
-//  if (val) {
-//    cities.value = await countryStore.getCities(val);
-//  }
-//};
-
 const submit = () => {
   isLoading.value = true;
   emit("submit", email.value);
@@ -180,17 +164,6 @@ const submit = () => {
     isLoading.value = false;
   }, 7000);
 };
-
-//const onValidateCompanyName = () => {
-//  console.log(item.value);
-//  validateCompanyName.value = 2;
-//};
-
-//const checkTerms = () => {};
-
-onMounted(async () => {
-  //countryStore.getCountries();
-});
 </script>
 <style>
 .custom-icon > .v-overlay__content {

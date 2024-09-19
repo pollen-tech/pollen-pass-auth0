@@ -49,7 +49,7 @@
       </p>
       <div class="my-2">
         <p class="font-weight-bold text-center mb-4">
-          {{ user?.email }}
+          {{ emailLocal }}
         </p>
       </div>
       <v-card
@@ -57,7 +57,7 @@
         elevation="0"
         class="align-center mb-4"
       >
-        <v-form ref="form">
+        <v-form ref="form" v-model="form_valid">
           <div class="my-4 text-start flex-1-0">
             <v-otp-input
               v-model="item.emailOTPCode"
@@ -94,6 +94,7 @@
             class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
+            :disabled="item.emailOTPCode.length < otpLength"
             :loading="isLoading"
             @click="submit"
             >Continue</v-btn
@@ -127,6 +128,7 @@
         </v-card>
       </v-dialog>
       <NotificationStatus />
+      <CommonConfirm ref="confirm" />
     </div>
   </div>
 </template>
@@ -142,6 +144,7 @@ import { useCommonStore } from "~/store/common";
 const auth = useAuth();
 const userStore = useUserStore();
 const user = userStore.getUser();
+const { getUserLocalStorage } = userStore;
 
 const commonStore = useCommonStore();
 
@@ -156,20 +159,58 @@ const remainingTime = ref(120);
 const timerRunning = ref(false);
 const timerInterval = ref(null);
 const channel = auth.get_channel();
+const form_valid = ref(false);
+const confirm = ref(null);
+const user_verified = ref(false);
 
 const emit = defineEmits(["submit", "sendEmailOtpEvent"]);
 
 const title = ref("Enter Verification Code");
-const item = ref({ items: [] });
+const item = ref({
+  emailOTPCode: "",
+});
 const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
 
-const emailLocal = user?.email || localStorage.getItem("email");
+const emailLocal = computed(
+  () => user.value?.email || localStorage.getItem("email")
+);
+onMounted(() => {
+  if (channel) {
+    const user_local = getUserLocalStorage();
+    if (user == null && user_local != null) {
+      userStore.setUser(user_local);
+    }
+    if (user_local?.user_id) {
+      user_verified.value = true;
+      show_validate_phone();
+    }
+  }
+});
+
+const show_validate_phone = async () => {
+  const options = {
+    title: "User OTP phone validation is not complete",
+    message:
+      "Please complete the OTP phone validation before accessing this page.",
+    icon: "mdi-lightbulb-on-20",
+    color: "purple darken-2",
+    actionText1: "Go to login",
+    actionText2: "Go to OTP",
+    actionIcon2: "",
+    hideClose: true,
+    rejection: false,
+  };
+  if (await confirm.value.open(options)) {
+    navigateTo("/auth/otp");
+  } else {
+    navigateTo("/auth/login");
+  }
+};
 
 const submit = async () => {
   isLoading.value = true;
-  console.log(user);
   const email = user.email;
   const firstName = user.firstName;
   const lastName = user.lastName;
@@ -185,11 +226,11 @@ const submit = async () => {
       last_name: lastName,
       incoming_channel: channel_code,
     };
-    console.log('body: ', body);
+    console.log("body: ", body);
     const req = await lmsApi(
       "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
-      body,
+      body
     );
     isLoading.value = false;
     if (req.user_id) {
@@ -240,7 +281,7 @@ const formatTime = computed(() => {
   const seconds = remainingTime.value % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
-    "0",
+    "0"
   )}`;
 });
 
@@ -280,7 +321,7 @@ const resendEmailOtp = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {
