@@ -11,8 +11,19 @@ export const useAuth = () => {
       localStorage.setItem("user_id", response?.user_id);
       localStorage.setItem(
         "expires_at",
-        JSON.stringify(response.expires_in * 1000 + new Date().getTime()),
+        JSON.stringify(response.expires_in * 1000 + new Date().getTime())
       );
+    }
+  };
+
+  const cleanup_user_data = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user_signup");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("expires_at");
+      localStorage.removeItem("id_token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("email");
     }
   };
 
@@ -78,5 +89,6 @@ export const useAuth = () => {
     get_expire_at,
     get_access_token,
     clear_localStorage,
+    cleanup_user_data,
   };
 };
