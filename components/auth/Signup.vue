@@ -60,7 +60,7 @@
             />
           </div>
 
-          <div class="my-2 text-start flex-1-0">
+          <div class="mt-2 mb-4 text-start flex-1-0">
             <label class="font-weight-medium" style="font-size: 14px"
               >Last Name
               <span class="red--text">*</span>
@@ -73,10 +73,12 @@
               :rules="required"
               class="custom-text-field"
               autocomplete="family-name"
+              hint="Enter your last name, If no last name please enter NA"
+              :persistent-hint="true"
             />
           </div>
 
-          <div class="my-2 text-start flex-1-0">
+          <div class="mt-4 mb-2 text-start flex-1-0">
             <label class="font-weight-medium" style="font-size: 14px"
               >Email
               <span class="red--text">*</span>
@@ -89,20 +91,39 @@
               :rules="required_email"
               class="custom-text-field"
               autocomplete="email"
+              hint="You will be asked to verify your email address"
+              :persistent-hint="true"
             />
           </div>
+          <v-checkbox
+            v-model="check_accept_terms"
+            :rules="[(v) => !!v || 'Checkbox is required']"
+            class="custom-text-field checkbox"
+          >
+            <template v-slot:label>
+              <div style="font-size: 14px; color: #111827">
+                Accept Pollen
+                <a
+                  href="https://www.pollen.tech/privacy"
+                  target="_blank"
+                  style="color: #6a27b9"
+                  v-bind="props"
+                  @click.stop
+                >
+                  Terms and Conditions
+                </a>
+              </div>
+            </template>
+          </v-checkbox>
           <v-btn
-            class="my-4 me-auto text-capitalize rounded-lg custom-button"
+            class="my-3 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
             block
             :loading="isLoading"
             @click="submit_signup()"
             >Continue</v-btn
           >
-          <p class="text-center" style="color: #111827; font-size: 14px">
-            Already have Pollen Pass account ?
-            <a href="/auth/login" class="link">Sign In with Pollen Pass</a>
-          </p>
+
           <p class="red--text text-caption text-center">{{ error }}</p>
           <p class="text-green-lighten-1 text-caption text-center">
             {{ submitted_message }}
@@ -121,6 +142,10 @@ import { ref, onMounted } from "vue";
 import { useUserStore } from "@/store/user";
 import SmallDialog from "@/components/common/SmallDialog.vue";
 import { useCommonStore } from "@/store/common";
+import { useAuth } from "@/composables/auth0";
+
+const auth = useAuth();
+const { cleanup_user_data } = auth;
 
 const userStore = useUserStore();
 const { validate_email_exist, verify_passwordless_email_login, cleanupUser } =
@@ -150,9 +175,12 @@ const item = ref({ items: [] });
 
 const formRef = ref(null);
 const isLoading = ref(false);
+const check_accept_terms = ref(false);
 
 const required_email = [
-  (v) => /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) || "Valid E-mail is required",
+  (v) =>
+    /^[\w+.-]+@[\w.-]+\.\w{2,}$/.test(v) ||
+    "Please enter a valid email address",
 ];
 const required = [(v) => !!v || "Field is required"];
 
@@ -189,7 +217,7 @@ const submit_signup = async () => {
   try {
     isLoading.value = true;
     const { valid } = await formRef.value.validate();
-    if (valid) {
+    if (valid && check_accept_terms.value == true) {
       const valid_email = await validate_email_add_exist();
       if (valid_email) {
         const user = {
@@ -198,9 +226,10 @@ const submit_signup = async () => {
           lastName: item.value.lastName,
           channelCode: get_channel(),
         };
+        cleanup_user_data();
         userStore.setUser(user);
         const verify_passwordless = await verify_passwordless_email_login(
-          item.value.email,
+          item.value.email
         );
         if (verify_passwordless.status_code != "LOGIN_ERROR") {
           navigateTo("/auth/verification");

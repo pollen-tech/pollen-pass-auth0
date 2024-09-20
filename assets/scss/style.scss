@@ -179,10 +179,19 @@ body {
   min-height: 40px !important;
 }
 
+.custom-text-field .v-input__details {
+  padding-inline: 5px !important;
+}
+.custom-text-field .v-input__details .v-messages {
+  font-size: 14px !important;
+}
+
 .custom-text-field {
   margin-top: 5px;
 }
-
+.checkbox .v-input__control {
+  height: 38px !important;
+}
 .custom-button {
   height: 40px !important;
   font-size: 16px !important;
