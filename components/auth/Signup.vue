@@ -102,7 +102,7 @@
             :rules="[(v) => !!v || 'Checkbox is required']"
             class="custom-text-field checkbox"
           >
-            <template v-slot:label>
+            <template #label>
               <div style="font-size: 14px; color: #111827">
                 Accept Pollen
                 <a
@@ -150,8 +150,7 @@ const auth = useAuth();
 const { cleanup_user_data } = auth;
 
 const userStore = useUserStore();
-const { validate_email_exist, verify_passwordless_email_login, cleanupUser } =
-  userStore;
+const { validate_email_exist, verify_passwordless_email_login } = userStore;
 
 const common_store = useCommonStore();
 
@@ -220,7 +219,7 @@ const submit_signup = async () => {
         cleanup_user_data();
         userStore.setUser(user);
         const verify_passwordless = await verify_passwordless_email_login(
-          item.value.email
+          item.value.email,
         );
         if (verify_passwordless.status_code != "LOGIN_ERROR") {
           navigateTo("/auth/verification");

@@ -100,7 +100,7 @@ const config = useRuntimeConfig();
 
 const user = userStore.getUser();
 const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email")
+  () => user.value?.email || localStorage.getItem("email"),
 );
 
 const otp = ref(null);
@@ -117,7 +117,7 @@ onMounted(async () => {
   const user_id = auth.get_user_id();
   if (auth.id || user_id) {
     const { data: userProfile } = await userStore.get_user_profile(
-      auth.id || user_id
+      auth.id || user_id,
     );
     user.value = userProfile;
   }
@@ -195,7 +195,7 @@ const sendWelcomeEmail = async (user_id) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -227,7 +227,7 @@ const verifyOtpEvent = async (otp) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     if (!response.ok) {

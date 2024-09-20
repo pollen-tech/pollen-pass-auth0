@@ -50,11 +50,6 @@ onMounted(() => {
   const user_local = getUserLocalStorage();
   if (user == null && user_local != null) {
     userStore.setUser(user_local);
-    let page = "/auth/verification";
-    if (user_local?.user_id) {
-      page = "/auth/otp";
-    }
-    // show_confirmation_dialog(page);
   }
 });
 
@@ -63,7 +58,7 @@ const send_otp = async (param) => {
     email.value = param;
     const req = await lmsApi(
       `/auth0/password-less-email-login/${email.value}`,
-      "POST"
+      "POST",
     );
     if (!req.error) {
       const user = {
