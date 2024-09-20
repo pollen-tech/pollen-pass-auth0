@@ -28,7 +28,7 @@
     <div
       class="d-flex flex-column align-center mx-12"
       :style="{
-        'margin-top': $vuetify.display.mobile ? '20px' : '4%',
+        'margin-top': $vuetify.display.mobile ? '20px' : '3%',
       }"
     >
       <div class="mb-6">
@@ -161,17 +161,6 @@ const form_valid = ref(false);
 
 const channel = computed(() => get_channel());
 const title = ref("Enter your information");
-const lms_notification = ref({
-  title: "How to Start Selling with Pollen's Liquidation Management System",
-  desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
-  message: "",
-});
-const direct_notification = ref({
-  title:
-    "Get exclusive access to the latest Pollen Direct liquidation inventory catalogs with Pollen Pass",
-  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
-  message: "",
-});
 const submitted_message = ref();
 const item = ref({ items: [] });
 
@@ -280,9 +269,7 @@ const redirect = () => {
   navigateTo(url.toString(), { external: true });
 };
 
-onMounted(async () => {
-  cleanupUser();
-});
+onMounted(async () => {});
 </script>
 <style>
 .custom-icon > .v-overlay__content {
