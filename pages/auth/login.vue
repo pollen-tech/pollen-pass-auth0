@@ -27,6 +27,9 @@ import { lmsApi } from "~/services/api";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 
+definePageMeta({
+  middleware: "auth",
+});
 const userStore = useUserStore();
 const { user, getUserLocalStorage } = userStore;
 
@@ -50,7 +53,7 @@ onMounted(() => {
     if (user_local?.user_id) {
       page = "/auth/otp";
     }
-    show_confirmation_dialog(page);
+    // show_confirmation_dialog(page);
   }
 });
 
@@ -59,7 +62,7 @@ const send_otp = async (param) => {
     email.value = param;
     const req = await lmsApi(
       `/auth0/password-less-email-login/${email.value}`,
-      "POST",
+      "POST"
     );
     if (req) {
       const user = {

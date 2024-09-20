@@ -15,7 +15,7 @@
             style="color: #6b7280"
             class="text-capitalize"
             alt="Back"
-            @click="returnToSignup()"
+            @click="show_validate_signup()"
           >
             <template #prepend>
               <v-icon color="#6B7280" />
@@ -142,6 +142,7 @@ import { lmsApi } from "~/services/api";
 import { useCommonStore } from "~/store/common";
 
 const auth = useAuth();
+const { cleanup_user_data } = auth;
 const userStore = useUserStore();
 const user = userStore.getUser();
 const { getUserLocalStorage } = userStore;
@@ -161,7 +162,6 @@ const timerInterval = ref(null);
 const channel = auth.get_channel();
 const form_valid = ref(false);
 const confirm = ref(null);
-const user_verified = ref(false);
 
 const emit = defineEmits(["submit", "sendEmailOtpEvent"]);
 
@@ -174,7 +174,7 @@ const isLoading = ref(false);
 const showDialog = ref(false);
 
 const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email"),
+  () => user.value?.email || localStorage.getItem("email")
 );
 onMounted(() => {
   if (channel) {
@@ -182,32 +182,12 @@ onMounted(() => {
     if (user == null && user_local != null) {
       userStore.setUser(user_local);
     }
-    if (user_local?.user_id) {
-      user_verified.value = true;
-      show_validate_phone();
-    }
+    // if (user_local?.user_id) {
+    //   user_verified.value = true;
+    //   show_validate_phone();
+    // }
   }
 });
-
-const show_validate_phone = async () => {
-  const options = {
-    title: "User OTP phone validation is not complete",
-    message:
-      "Please complete the OTP phone validation before accessing this page.",
-    icon: "mdi-lightbulb-on-20",
-    color: "purple darken-2",
-    actionText1: "Go to login",
-    actionText2: "Go to OTP",
-    actionIcon2: "",
-    hideClose: true,
-    rejection: false,
-  };
-  if (await confirm.value.open(options)) {
-    navigateTo("/auth/otp");
-  } else {
-    navigateTo("/auth/login");
-  }
-};
 
 const submit = async () => {
   isLoading.value = true;
@@ -230,7 +210,7 @@ const submit = async () => {
     const req = await lmsApi(
       "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
-      body,
+      body
     );
     isLoading.value = false;
     if (req.user_id) {
@@ -281,7 +261,7 @@ const formatTime = computed(() => {
   const seconds = remainingTime.value % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
-    "0",
+    "0"
   )}`;
 });
 
@@ -321,7 +301,7 @@ const resendEmailOtp = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {
@@ -332,10 +312,6 @@ const resendEmailOtp = async () => {
     console.log(err);
     error.value = "Failed to fetch data";
   }
-};
-
-const returnToSignup = () => {
-  window.location.href = "/auth/login";
 };
 
 const getErrorMessage = (req) => {
@@ -356,6 +332,30 @@ const getErrorMessage = (req) => {
     msg: errorMsg,
   });
 };
+
+const returnToSignup = () => {
+  window.location.href = "/auth/signup";
+};
+
+const show_validate_signup = async () => {
+  const options = {
+    title: "Sign-up is incomplete",
+    message:
+      "You haven’t completed your sign-up process, are you sure you want to exit this page.",
+    icon: "mdi-lightbulb-on-20",
+    color: "purple darken-2",
+    actionText1: "No, Cancel",
+    actionText2: "Yes, Proceed",
+    actionIcon2: "",
+    hideClose: true,
+    rejection: false,
+  };
+  if (await confirm.value.open(options)) {
+    cleanup_user_data();
+    navigateTo("/auth/login");
+  }
+};
+
 onUpdated(() => {
   if (emailLocal.value) {
     remainingTime.value = totalTime.value;

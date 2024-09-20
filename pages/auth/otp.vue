@@ -27,7 +27,7 @@
                   style="color: #6b7280"
                   class="text-capitalize"
                   alt="Back"
-                  @click="goToPrevious()"
+                  @click="show_validate_signup()"
                 >
                   <template #prepend>
                     <v-icon color="#6B7280" />
@@ -76,6 +76,7 @@
       </v-col>
     </v-row>
     <NotificationStatus />
+    <CommonConfirm ref="confirm" />
   </div>
 </template>
 
@@ -91,6 +92,7 @@ definePageMeta({
 });
 const router = useRouter();
 const auth = useAuth();
+const { cleanup_user_data } = auth;
 const commonStore = useCommonStore();
 const userStore = useUserStore();
 
@@ -98,7 +100,7 @@ const config = useRuntimeConfig();
 
 const user = userStore.getUser();
 const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email"),
+  () => user.value?.email || localStorage.getItem("email")
 );
 
 const otp = ref(null);
@@ -108,13 +110,14 @@ const isPhoneSave = ref(false);
 const otpType = ref("");
 const isOtpPage = ref(false);
 const isPhoneExist = ref(false);
+const confirm = ref(null);
 
 onMounted(async () => {
   isPhoneExist.value = false;
   const user_id = auth.get_user_id();
   if (auth.id || user_id) {
     const { data: userProfile } = await userStore.get_user_profile(
-      auth.id || user_id,
+      auth.id || user_id
     );
     user.value = userProfile;
   }
@@ -192,7 +195,7 @@ const sendWelcomeEmail = async (user_id) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -224,7 +227,7 @@ const verifyOtpEvent = async (otp) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -267,12 +270,26 @@ const updateIsPhoneSave = (value) => {
   isPhoneSave.value = value;
 };
 
-const goToPrevious = () => {
-  window.location.href = "/auth/login";
-};
-
 const get_channel = () => {
   return typeof window !== "undefined" ? localStorage.getItem("channel") : null;
+};
+const show_validate_signup = async () => {
+  const options = {
+    title: "Sign-up is incomplete",
+    message:
+      "You haven’t completed your phone number verification, are you sure you want to exit this page.",
+    icon: "mdi-lightbulb-on-20",
+    color: "purple darken-2",
+    actionText1: "No, Cancel",
+    actionText2: "Yes, Proceed",
+    actionIcon2: "",
+    hideClose: true,
+    rejection: false,
+  };
+  if (await confirm.value.open(options)) {
+    cleanup_user_data();
+    navigateTo("/auth/login");
+  }
 };
 </script>
 
