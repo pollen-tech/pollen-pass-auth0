@@ -95,7 +95,7 @@ const fetchUserInfo = async (userId) => {
       const userData = response?.data || {};
 
       if (!userData.phone_no) {
-        show_validate_phone();
+        // show_validate_phone();
         otp_valid.value = false;
       } else {
         const formattedDate = moment(userData.created_at).format("DD/MM/YYYY");
@@ -113,26 +113,6 @@ const fetchUserInfo = async (userId) => {
     }
   } catch (error) {
     console.error("Failed to fetch user info:", error);
-  }
-};
-
-const show_validate_phone = async () => {
-  const options = {
-    title: "User OTP phone validation is not complete",
-    message:
-      "Please complete the OTP phone validation before accessing this page.",
-    icon: "mdi-lightbulb-on-20",
-    color: "purple darken-2",
-    actionText1: "Go to login",
-    actionText2: "Go to OTP",
-    actionIcon2: "",
-    hideClose: true,
-    rejection: false,
-  };
-  if (await confirm.value.open(options)) {
-    navigateTo("/auth/otp");
-  } else {
-    navigateTo("/auth/login");
   }
 };
 
