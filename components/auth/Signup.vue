@@ -1,42 +1,44 @@
 <template>
   <div>
+    <v-row no-gutters>
+      <v-col cols="12" md="12" class="text-left">
+        <v-sheet
+          style="
+            display: flex !important;
+            width: 100%;
+            justify-content: space-between;
+          "
+        >
+          <v-btn
+            variant="text"
+            prepend-icon="mdi-chevron-left"
+            style="color: #6b7280"
+            class="text-capitalize"
+            alt="Back"
+            @click="redirect()"
+          >
+            <template #prepend>
+              <v-icon color="#6B7280" />
+            </template>
+            Back to {{ channel == "CH_LMS" ? "LMS" : "Pollen Direct" }}
+          </v-btn>
+        </v-sheet>
+      </v-col>
+    </v-row>
     <div
-      class="d-flex flex-column align-center mx-16"
+      class="d-flex flex-column align-center mx-12"
       :style="{
-        'margin-top': $vuetify.display.mobile ? '20px' : '10%',
+        'margin-top': $vuetify.display.mobile ? '20px' : '4%',
       }"
     >
-      <div class="text-caption justify-center mb-12 d-flex">
+      <div class="mb-6">
         <img
-          v-if="channel === 'CH_LMS'"
-          src="~/assets/images/pollen.svg"
+          src="~/assets/images/pollen-pass-original.svg"
           class="mx-4"
-          style="width: 50px"
+          style="width: 55px"
         />
-        <img
-          v-else
-          src="~/assets/images/pollen-direct.svg"
-          class="mx-4"
-          style="width: 50px"
-        />
-
-        <div v-if="channel === 'CH_LMS'">
-          <p class="font-weight-bold" style="font-size: 14px">
-            {{ lms_notification.title }}
-          </p>
-          <p>
-            {{ lms_notification.desc }}
-          </p>
-        </div>
-        <div v-else>
-          <p class="font-weight-bold" style="font-size: 14px">
-            {{ direct_notification.title }}
-          </p>
-          <p>
-            {{ direct_notification.desc }}
-          </p>
-        </div>
       </div>
+
       <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
@@ -258,6 +260,24 @@ const get_channel = () => {
       : "POLLEN_PASS";
     return channel;
   }
+};
+
+const redirect = () => {
+  const runtimeConfig = useRuntimeConfig();
+  const channelValue = auth.get_channel();
+  let redirect_url = "";
+
+  if (channelValue === "CH_DIRECT") {
+    redirect_url = runtimeConfig.public.pollenDirectUrl;
+  } else {
+    redirect_url = runtimeConfig.public.pollenLmsUrl;
+  }
+
+  const url = new URL(redirect_url);
+  url.searchParams.append("user_id", auth.get_user_id());
+  url.searchParams.append("access_token", auth.get_access_token());
+  url.searchParams.append("expires_at", auth.get_expire_at());
+  navigateTo(url.toString(), { external: true });
 };
 
 onMounted(async () => {

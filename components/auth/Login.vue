@@ -1,41 +1,17 @@
 <template>
   <div>
     <div
-      class="d-flex flex-column align-center mx-16"
+      class="d-flex flex-column align-center mx-12"
       :style="{
         'margin-top': $vuetify.display.mobile ? '20px' : '10%',
       }"
     >
-      <div class="text-caption justify-center mb-12 d-flex">
+      <div class="mb-6">
         <img
-          v-if="channel === 'CH_LMS'"
-          src="~/assets/images/pollen.svg"
+          src="~/assets/images/pollen-pass-original.svg"
           class="mx-4"
-          style="width: 50px"
+          style="width: 55px"
         />
-        <img
-          v-else
-          src="~/assets/images/pollen-direct.svg"
-          class="mx-4"
-          style="width: 50px"
-        />
-
-        <div v-if="channel === 'CH_LMS'">
-          <p class="font-weight-bold" style="font-size: 14px">
-            {{ lms_notification.title }}
-          </p>
-          <p>
-            {{ lms_notification.desc }}
-          </p>
-        </div>
-        <div v-else>
-          <p class="font-weight-bold" style="font-size: 14px">
-            {{ direct_notification.title }}
-          </p>
-          <p>
-            {{ direct_notification.desc }}
-          </p>
-        </div>
       </div>
       <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
       <p style="color: #111827; font-size: 14px">{{ desc }}</p>
@@ -45,11 +21,10 @@
         elevation="0"
         class="align-center my-4"
       >
-        <v-form ref="form">
+        <v-form ref="formRef">
           <div class="my-4 text-start flex-1-0">
             <label class="font-weight-medium" style="font-size: 14px"
               >Enter Email Address
-              <!--<span class="red--text">*</span>-->
             </label>
 
             <v-text-field
@@ -60,26 +35,7 @@
               class="custom-text-field"
             />
           </div>
-          <!--<v-checkbox
-            v-model="checkAcceptTerms"
-            hide-details
-            @change="checkTerms()"
-          >
-            <template v-slot:label>
-              <div>
-                Accept Pollen
-                <a
-                  href="https://www.pollen.tech/privacy"
-                  target="_blank"
-                  style="color: #6a27b9"
-                  v-bind="props"
-                  @click.stop
-                >
-                  Terms and Conditions
-                </a>
-              </div>
-            </template>
-          </v-checkbox>-->
+
           <v-btn
             class="my-4 me-auto text-capitalize rounded-lg custom-button"
             color="#8431E7"
@@ -126,43 +82,34 @@
 
 <script setup>
 import { ref } from "vue";
-import { useAuth } from "@/composables/auth0";
-
-//import { useSellerStore } from "@/store/seller";
-//import { useCountryStore } from "@/store/country";
 
 const emit = defineEmits(["submit"]);
-
-//const countryStore = useCountryStore();
-//const { countries } = storeToRefs(countryStore);
-
-//const sellerStore = useSellerStore();
-
-const auth = useAuth();
-const channel = computed(() => auth.get_channel());
 
 const title = ref("Login");
 const desc = ref("Login to your Pollen Pass account");
 
-const lms_notification = ref({
-  title: "How to Start Selling with Pollen's Liquidation Management System",
-  desc: "Sign up and get a free LMS account to start listing excess and obsolete inventory, and receive offers from Pollen's verified buyers around the world",
-});
-const direct_notification = ref({
-  title:
-    "Get exclusive access to the latest Pollen Direct liquidation inventory catalogs with Pollen Pass",
-  desc: "Pollen Pass is Pollen’s free buyer membership program. By signing up as a Pollen Pass member on Pollen Save. Pollen Save delivers excess or discontinued products from global brands direct to your doorstep. Whether you're looking for shampoo, conditioner, face wash, make up, toys, shoes, or more - there's something for everyone at unbeatable prices on Pollen Save!",
-});
 const email = ref("");
 const required = [(v) => !!v || "Field is required"];
 const isLoading = ref(false);
 const showDialog = ref(false);
-const submit = () => {
-  isLoading.value = true;
-  emit("submit", email.value);
-  setTimeout(() => {
+const formRef = ref(null);
+
+const submit = async () => {
+  try {
+    isLoading.value = true;
+    const { valid } = await formRef.value.validate();
+    if (valid) {
+      emit("submit", email.value);
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 7000);
+    } else {
+      isLoading.value = false;
+    }
+  } catch (err) {
     isLoading.value = false;
-  }, 7000);
+    console.log(err);
+  }
 };
 </script>
 <style>

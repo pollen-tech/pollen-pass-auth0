@@ -17,7 +17,7 @@
         </div>
       </v-col>
     </v-row>
-    <CommonConfirm ref="confirm" />
+    <NotificationStatus />
   </div>
 </template>
 
@@ -26,6 +26,7 @@ import { ref } from "vue";
 import { lmsApi } from "~/services/api";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
+import { useCommonStore } from "@/store/common";
 
 definePageMeta({
   middleware: "auth",
@@ -33,12 +34,12 @@ definePageMeta({
 const userStore = useUserStore();
 const { user, getUserLocalStorage } = userStore;
 
+const common_store = useCommonStore();
+
 const auth = useAuth();
-const { cleanup_user_data } = auth;
 
 const is_email_sent = ref(false);
 const email = ref("");
-const confirm = ref(null);
 
 onMounted(() => {
   const channel = auth.get_channel();
@@ -64,16 +65,19 @@ const send_otp = async (param) => {
       `/auth0/password-less-email-login/${email.value}`,
       "POST"
     );
-    if (req) {
+    if (!req.error) {
       const user = {
         email: email.value,
         channelCode: get_channel() || "POLLEN_PASS",
       };
       userStore.setUser(user);
       is_email_sent.value = true;
+    } else {
+      show_error(req);
     }
   } catch (err) {
     console.log(err);
+    show_error(err);
   }
 };
 
@@ -82,6 +86,24 @@ const get_channel = () => {
     const channel = localStorage.getItem("channel");
     return channel;
   }
+};
+
+const show_error = (req) => {
+  let errorMsg = req.message;
+  if (typeof req.message !== "string") {
+    const formattedMessages = req.message.map((message) => {
+      const words = message.split(" ");
+      words[0] = "• " + words[0];
+      return words.join(" ");
+    });
+
+    errorMsg = formattedMessages.join(",<br/>");
+  }
+  common_store.setShowNotification({
+    display: true,
+    status: "error",
+    msg: errorMsg,
+  });
 };
 
 const show_dialog = async () => {
@@ -103,25 +125,6 @@ const show_dialog = async () => {
     navigateTo(runtimeConfig.public.pollenDirectUrl.replace("/redirect", ""), {
       external: true,
     });
-  }
-};
-
-const show_confirmation_dialog = async (param) => {
-  const options = {
-    title: "User devtestonboard11@yopmail.com is already login",
-    message: "Do you want to signout from previous login?",
-    icon: "mdi-lightbulb-on-20",
-    color: "purple darken-2",
-    actionText1: "Proceed to Login",
-    actionText2: "Go to Verification",
-    actionIcon2: "",
-    hideClose: true,
-    rejection: false,
-  };
-  if (await confirm.value.open(options)) {
-    navigateTo(`${param}`);
-  } else {
-    cleanup_user_data();
   }
 };
 </script>
