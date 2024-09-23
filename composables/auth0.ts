@@ -11,7 +11,7 @@ export const useAuth = () => {
       localStorage.setItem("user_id", response?.user_id);
       localStorage.setItem(
         "expires_at",
-        JSON.stringify(response.expires_in * 1000 + new Date().getTime()),
+        JSON.stringify(response.expires_in * 1000 + new Date().getTime())
       );
     }
   };
@@ -44,6 +44,13 @@ export const useAuth = () => {
   const get_access_token = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("access_token");
+    }
+    return null;
+  };
+
+  const get_id_token = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("id_token");
     }
     return null;
   };
@@ -90,5 +97,6 @@ export const useAuth = () => {
     get_access_token,
     clear_localStorage,
     cleanup_user_data,
+    get_id_token,
   };
 };

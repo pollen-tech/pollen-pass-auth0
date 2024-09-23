@@ -131,6 +131,10 @@ const redirect = () => {
   url.searchParams.append("user_id", auth.get_user_id());
   url.searchParams.append("access_token", auth.get_access_token());
   url.searchParams.append("expires_at", auth.get_expire_at());
+  url.searchParams.append("id_token", auth.get_id_token());
+  url.searchParams.append("channel", channel.value);
+  url.searchParams.append("email", user.value.email);
+
   navigateTo(url.toString(), { external: true });
 };
 </script>
