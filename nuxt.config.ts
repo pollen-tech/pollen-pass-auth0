@@ -62,6 +62,8 @@ export default defineNuxtConfig({
       API_URL: process.env.NUXT_USER_ONBOARD_API, // "https://47ekwsnw5d.execute-api.ap-southeast-1.amazonaws.com/dev",
       pollenLmsUrl: process.env.NUXT_POLLEN_LMS_URL,
       pollenDirectUrl: process.env.NUXT_POLLEN_DIRECT_URL,
+      privacyPolicy: process.env.NUXT_POLLEN_PRIVACY_POLICY,
+      termCondition: process.env.NUXT_POLLEN_TERM_CONDITION,
     },
   },
 });
