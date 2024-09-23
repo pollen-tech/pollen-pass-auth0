@@ -18,7 +18,7 @@
       <li class="pb-5">
         Buy directly from global brands on <br />
         <a
-          href="https://pollen.tech/"
+          :href="pollen_direct"
           class="text-decoration-underline font-weight-bold"
           style="color: #fde68a"
           >Pollen Direct</a
@@ -28,7 +28,7 @@
         Sell excess inventory with AI - First Excess Inventory Operating System
         on
         <a
-          href="https://pollen.tech/"
+          :href="lms"
           class="text-decoration-underline font-weight-bold"
           style="color: #fde68a"
           >LMS</a
@@ -49,4 +49,11 @@
   </v-sheet>
 </template>
 
-<script setup></script>
+<script setup>
+const runtimeConfig = useRuntimeConfig();
+const pollen_direct = runtimeConfig.public.pollenDirectUrl.replace(
+  "/redirect",
+  ""
+);
+const lms = runtimeConfig.public.pollenLmsUrl.replace("/redirect", "");
+</script>
