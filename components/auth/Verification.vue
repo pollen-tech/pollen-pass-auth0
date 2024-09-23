@@ -217,7 +217,6 @@ const submit = async () => {
       data.value = req;
 
       auth.handleAuth0Response(data.value);
-      debugger;
       userStore.setUser({ user_id: data.value.user_id });
 
       console.log("data.value.user_id: ", data.value.user_id);
