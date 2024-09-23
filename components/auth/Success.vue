@@ -134,7 +134,8 @@ const redirect = () => {
   url.searchParams.append("id_token", auth.get_id_token());
   url.searchParams.append("channel", channel.value);
   url.searchParams.append("email", user.value.email);
-
+  console.log(url);
+  debugger;
   navigateTo(url.toString(), { external: true });
 };
 </script>
