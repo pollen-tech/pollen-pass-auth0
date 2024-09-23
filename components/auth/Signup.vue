@@ -104,9 +104,17 @@
           >
             <template #label>
               <div style="font-size: 14px; color: #111827">
-                Accept Pollen
+                Accept
                 <a
-                  href="https://www.pollen.tech/privacy"
+                  :href="config.public.privacyPolicy"
+                  target="_blank"
+                  style="color: #6a27b9"
+                  v-bind="props"
+                  @click.stop
+                >
+                  Privacy Policy </a
+                >&<a
+                  :href="config.public.termCondition"
                   target="_blank"
                   style="color: #6a27b9"
                   v-bind="props"
@@ -145,6 +153,8 @@ import { useUserStore } from "@/store/user";
 import SmallDialog from "@/components/common/SmallDialog.vue";
 import { useCommonStore } from "@/store/common";
 import { useAuth } from "@/composables/auth0";
+
+const config = useRuntimeConfig();
 
 const auth = useAuth();
 const { cleanup_user_data } = auth;
@@ -219,7 +229,7 @@ const submit_signup = async () => {
         cleanup_user_data();
         userStore.setUser(user);
         const verify_passwordless = await verify_passwordless_email_login(
-          item.value.email,
+          item.value.email
         );
         if (verify_passwordless.status_code != "LOGIN_ERROR") {
           navigateTo("/auth/verification");
