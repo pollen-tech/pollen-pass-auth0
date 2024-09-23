@@ -51,7 +51,7 @@
           />
 
           <p v-if="!phoneValid" class="red--text text-caption mt-2">
-            Field is required
+            Phone number is required
           </p>
         </div>
 
