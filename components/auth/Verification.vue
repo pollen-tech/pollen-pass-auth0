@@ -174,7 +174,7 @@ const isLoading = ref(false);
 const showDialog = ref(false);
 
 const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email"),
+  () => user.value?.email || localStorage.getItem("email")
 );
 onMounted(() => {
   if (channel) {
@@ -210,13 +210,14 @@ const submit = async () => {
     const req = await lmsApi(
       "/auth0/pollen-pass/password-less-email-otp-validate",
       "POST",
-      body,
+      body
     );
     isLoading.value = false;
     if (req.user_id) {
       data.value = req;
 
       auth.handleAuth0Response(data.value);
+      debugger;
       userStore.setUser({ user_id: data.value.user_id });
 
       console.log("data.value.user_id: ", data.value.user_id);
@@ -261,7 +262,7 @@ const formatTime = computed(() => {
   const seconds = remainingTime.value % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
     2,
-    "0",
+    "0"
   )}`;
 });
 
@@ -301,7 +302,7 @@ const resendEmailOtp = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!response.ok) {
