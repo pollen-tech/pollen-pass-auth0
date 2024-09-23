@@ -32,7 +32,7 @@
                   <template #prepend>
                     <v-icon color="#6B7280" />
                   </template>
-                  Previous
+                  Go back to Login
                 </v-btn>
                 <v-btn
                   variant="text"
@@ -62,7 +62,7 @@
           <AuthOtpCode
             v-if="isOtpPage"
             :reference-id="user.referenceId"
-            :phonenumber="user.phone"
+            :phonenumber="user.phone || user.phoneNumber"
             :phone-verified="user.phoneVerified"
             :is-otp-loading="isOtpLoading"
             :is-otp-valid="isOtpValid"
@@ -98,9 +98,9 @@ const userStore = useUserStore();
 
 const config = useRuntimeConfig();
 
-const user = userStore.getUser();
+let user = userStore.getUser();
 const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email"),
+  () => user.value?.email || localStorage.getItem("email")
 );
 
 const otp = ref(null);
@@ -117,17 +117,17 @@ onMounted(async () => {
   const user_id = auth.get_user_id();
   if (auth.id || user_id) {
     const { data: userProfile } = await userStore.get_user_profile(
-      auth.id || user_id,
+      auth.id || user_id
     );
-    user.value = userProfile;
+    user = userProfile;
   }
-  if (user.value?.phone_verified) {
+  if (user?.phone_verified) {
     router.push("/auth/success");
   }
 });
 
 const getPhone = (param) => {
-  user.value.phone = param;
+  user.phone = param;
   savePhone(param);
 };
 
@@ -195,7 +195,7 @@ const sendWelcomeEmail = async (user_id) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      },
+      }
     );
 
     if (!response.ok) {
@@ -227,7 +227,7 @@ const verifyOtpEvent = async (otp) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      },
+      }
     );
 
     if (!response.ok) {

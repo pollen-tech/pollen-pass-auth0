@@ -44,6 +44,7 @@
               autocomplete: false,
               showDialCode: false,
             }"
+            :disabled="isPhoneSave"
             style="border-radius: 6px !important"
             @validate="phoneObject"
             @input="onPhoneInput"

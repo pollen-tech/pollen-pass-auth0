@@ -59,6 +59,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return;
   }
 
+  // Additional logic to redirect from auth-otp to auth-verification
+  if (to.name === "auth-otp") {
+    if (!user.value?.user_id) {
+      redirectTo("/auth/verification");
+      return;
+    }
+  }
+
   if (user.value?.user_id) {
     const req = await get_user_profile(user.value.user_id);
     if (!req.data?.phone_verified && to.name !== "auth-otp") {
