@@ -99,9 +99,7 @@ const userStore = useUserStore();
 const config = useRuntimeConfig();
 
 let user = userStore.getUser();
-const emailLocal = computed(
-  () => user.value?.email || localStorage.getItem("email")
-);
+const emailLocal = computed(() => user?.email || localStorage.getItem("email"));
 
 const otp = ref(null);
 const isOtpValid = ref(true);
