@@ -189,7 +189,7 @@ const sendWelcomeEmail = async (user_id) => {
 
   try {
     const response = await fetch(
-      `${config.public.API_URL}/users/${user_id}/welcome-email`,
+      `${config.public.API_URL}/users/${user_id || user.value.user_id}/welcome-email`,
       {
         method: "POST",
         headers: {
