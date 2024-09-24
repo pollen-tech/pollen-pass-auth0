@@ -100,7 +100,7 @@ export default {
       const seconds = this.remainingTime % 60;
       return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
         2,
-        "0",
+        "0"
       )}`;
     },
   },
@@ -113,10 +113,10 @@ export default {
       this.isLoading = true;
       setTimeout(() => {
         this.isLoading = false;
+        this.$emit("setOtpLoading", false);
       }, 2000);
       console.log("sendPhoneNumber: ", this.otp);
       this.$emit("setOtpLoading", true);
-
       this.$emit("verifyOtpEvent", this.otp);
     },
     startTimer() {

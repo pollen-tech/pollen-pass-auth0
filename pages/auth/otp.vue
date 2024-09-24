@@ -136,8 +136,8 @@ const savePhone = async (_param) => {
   // Logic to save phone
 };
 
-const verifyOtpLoading = () => {
-  isOtpLoading.value = true;
+const verifyOtpLoading = (param) => {
+  isOtpLoading.value = param;
 };
 
 const goToPhoneNumberPage = () => {
@@ -153,10 +153,9 @@ const resendOtp = async () => {
 const sendOtp = async (type = "sms") => {
   otpType.value = type;
   const user = userStore.getUser();
-
   const payload = {
-    country_code: parseInt(user.value?.countryCode, 10),
-    phone_no: parseInt(user.value?.phoneNumber, 10),
+    country_code: parseInt(user.countryCode, 10),
+    phone_no: parseInt(user.phoneNumber, 10),
     method: type,
   };
 
@@ -213,9 +212,9 @@ const verifyOtpEvent = async (otp) => {
     typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
   const user = userStore.getUser();
   const payload = {
-    user_id: user.value?.user_id || user_id,
-    country_code: parseInt(user.value?.countryCode, 10),
-    phone_no: parseInt(user.value?.phoneNumber, 10),
+    user_id: user.user_id || user_id,
+    country_code: parseInt(user.countryCode, 10),
+    phone_no: parseInt(user.phoneNumber, 10),
     otp: otp,
   };
 
