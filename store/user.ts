@@ -25,6 +25,9 @@ export const useUserStore = defineStore("user", {
       localStorage.setItem("email", user.email);
       localStorage.setItem("user_signup", JSON.stringify(user));
     },
+    set_user_email(param) {
+      localStorage.setItem("email", param);
+    },
     getUser(): User | null {
       return this.user;
     },
@@ -44,7 +47,7 @@ export const useUserStore = defineStore("user", {
 
     async validate_email_exist(param_email: any) {
       const req = await userOnboardApi(
-        `/users/pollen-pass-by-email/${param_email}`,
+        `/users/pollen-pass-by-email/${param_email}`
       );
       return req;
     },
@@ -52,7 +55,7 @@ export const useUserStore = defineStore("user", {
     async verify_passwordless_email_login(param_email: any) {
       const req = await userOnboardApi(
         `/auth0/password-less-email-login/${param_email}`,
-        "POST",
+        "POST"
       );
       return req;
     },

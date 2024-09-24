@@ -98,8 +98,10 @@ const userStore = useUserStore();
 
 const config = useRuntimeConfig();
 
-let user = userStore.getUser();
-const emailLocal = computed(() => user?.email || localStorage.getItem("email"));
+const user = ref(null);
+const emailLocal = computed(
+  () => user.value?.email || localStorage.getItem("email")
+);
 
 const otp = ref(null);
 const isOtpValid = ref(true);
@@ -117,15 +119,16 @@ onMounted(async () => {
     const { data: userProfile } = await userStore.get_user_profile(
       auth.id || user_id
     );
-    user = userProfile;
+    user.value = userProfile;
+    userStore.set_user_email(userProfile.email);
   }
-  if (user?.phone_verified) {
+  if (user.value?.phone_verified) {
     router.push("/auth/success");
   }
 });
 
 const getPhone = (param) => {
-  user.phone = param;
+  user.value.phone = param;
   savePhone(param);
 };
 
@@ -152,8 +155,8 @@ const sendOtp = async (type = "sms") => {
   const user = userStore.getUser();
 
   const payload = {
-    country_code: parseInt(user.countryCode, 10),
-    phone_no: parseInt(user.phoneNumber, 10),
+    country_code: parseInt(user.value?.countryCode, 10),
+    phone_no: parseInt(user.value?.phoneNumber, 10),
     method: type,
   };
 
@@ -210,9 +213,9 @@ const verifyOtpEvent = async (otp) => {
     typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
   const user = userStore.getUser();
   const payload = {
-    user_id: user.user_id || user_id,
-    country_code: parseInt(user.countryCode, 10),
-    phone_no: parseInt(user.phoneNumber, 10),
+    user_id: user.value?.user_id || user_id,
+    country_code: parseInt(user.value?.countryCode, 10),
+    phone_no: parseInt(user.value?.phoneNumber, 10),
     otp: otp,
   };
 
