@@ -31,12 +31,20 @@
         </v-card>
         <div class="d-flex justify-center mb-6">
           <v-sheet class="ma-2 pa-2 align-center text-center">
-            <p class="py-4 px-10 grey--text" style="width: 500px">
+            <p
+              class="py-4 px-10 grey--text text-center mx-auto"
+              :style="{
+                width: xs ? '400px' : '500px',
+              }"
+            >
               {{ componentDescription }}
             </p>
             <v-btn
               color="deep-purple-accent-4"
               class="my-4 px-10 text-capitalize rounded-lg"
+              :style="{
+                width: xs ? '340px' : 'auto',
+              }"
               @click="redirect"
             >
               Proceed to
@@ -56,6 +64,7 @@ import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 import moment from "moment";
+import { useDisplay } from "vuetify";
 
 const componentTitle = ref("Welcome to Pollen Pass!");
 const user = ref({
@@ -65,6 +74,8 @@ const user = ref({
   memberid: "",
   createdate: "",
 });
+const { xs } = useDisplay();
+
 const config = ref(null);
 const channel = ref(null);
 const confirm = ref(null);

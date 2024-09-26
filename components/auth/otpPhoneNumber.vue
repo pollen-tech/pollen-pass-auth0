@@ -4,7 +4,12 @@
       <h3 class="font-weight-bold my-8">
         {{ isPhoneSave ? notificationTitle2 : notificationTitle1 }}
       </h3>
-      <v-form ref="form" class="w-50">
+      <v-form
+        ref="form"
+        :class="{
+          'w-50': !xs,
+        }"
+      >
         <div class="my-2">
           <div class="d-flex">
             <label class="font-weight-medium text-body-2"
@@ -118,6 +123,7 @@
 </template>
 
 <script>
+import { useDisplay } from "vuetify";
 import { VueTelInput } from "vue-tel-input";
 import "vue-tel-input/vue-tel-input.css";
 import { useUserStore } from "~/store/user";
@@ -145,7 +151,6 @@ export default {
     },
   },
   emits: ["otpEvent", "someEvent", "sendOtp", "isPhoneSave"],
-
   data() {
     return {
       notificationTitle1: "Phone number Verification",
@@ -157,6 +162,7 @@ export default {
       config: null,
       otpType: null,
       isLoading: false,
+      xs: useDisplay().xs,
     };
   },
   mounted() {

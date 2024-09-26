@@ -11,7 +11,12 @@
         <AuthSideBar />
       </v-col>
       <v-col cols="12" md="8">
-        <div class="ma-8">
+        <div
+          :class="{
+            'my-8': xs,
+            'ma-8': !xs,
+          }"
+        >
           <AuthLogin v-if="!is_email_sent" @submit="send_otp" />
           <AuthVerification v-else />
         </div>
@@ -23,6 +28,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { useDisplay } from "vuetify";
 import { lmsApi } from "~/services/api";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
@@ -31,6 +37,9 @@ import { useCommonStore } from "@/store/common";
 definePageMeta({
   middleware: "auth",
 });
+
+const { xs } = useDisplay();
+
 const userStore = useUserStore();
 const { user, getUserLocalStorage } = userStore;
 
@@ -58,7 +67,7 @@ const send_otp = async (param) => {
     email.value = param;
     const req = await lmsApi(
       `/auth0/password-less-email-login/${email.value}`,
-      "POST",
+      "POST"
     );
     if (!req.error) {
       const user = {

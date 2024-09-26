@@ -3,7 +3,7 @@
     <div
       class="d-flex flex-column align-center mx-12"
       :style="{
-        'margin-top': $vuetify.display.mobile ? '20px' : '10%',
+        'margin-top': $vuetify.display.mobile ? '75px' : '10%',
       }"
     >
       <div class="mb-6">
@@ -46,6 +46,7 @@
           >
           <p class="text-center" style="color: #111827; font-size: 14px">
             Want to access Pollen Pass?
+            <br v-if="xs" />
             <a href="/auth/signup" class="link">Sign Up with Pollen Pass</a>
           </p>
         </v-form>
@@ -82,6 +83,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { useDisplay } from "vuetify";
+
+const { xs } = useDisplay();
 
 const emit = defineEmits(["submit"]);
 

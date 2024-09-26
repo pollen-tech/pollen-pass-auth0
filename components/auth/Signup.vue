@@ -31,20 +31,25 @@
         'margin-top': $vuetify.display.mobile ? '20px' : '3%',
       }"
     >
-      <div class="mb-6">
-        <img
-          src="~/assets/images/pollen-pass-original.svg"
-          class="mx-4"
-          style="width: 55px"
-        />
-      </div>
-
-      <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
       <v-card
         :width="$vuetify.display.mobile ? 300 : 450"
         elevation="0"
-        class="align-center my-4"
+        :class="[
+          'align-center text-center my-4',
+          xs ? 'overflow-y-scroll' : 'overflow-y-hidden',
+        ]"
+        :max-height="xs ? '75vh' : 'auto'"
       >
+        <div class="mb-6">
+          <img
+            src="~/assets/images/pollen-pass-original.svg"
+            class="mx-4"
+            style="width: 55px"
+          />
+        </div>
+
+        <h3 style="color: #111827; font-size: 20px">{{ title }}</h3>
+
         <v-form ref="formRef" v-model="form_valid" lazy-validation>
           <div class="my-2 text-start flex-1-0">
             <label class="font-weight-medium" style="font-size: 14px"
@@ -100,10 +105,16 @@
           <v-checkbox
             v-model="check_accept_terms"
             :rules="[(v) => !!v || 'Checkbox is required']"
-            class="custom-text-field checkbox"
+            :class="['custom-text-field checkbox', xs ? 'my-5' : 'my-3']"
           >
             <template #label>
-              <div style="font-size: 14px; color: #111827">
+              <div
+                :style="{
+                  'max-width': $vuetify.display.mobile ? '240px' : 'auto',
+                  'font-size': '14px',
+                  color: '#111827',
+                }"
+              >
                 Accept
                 <a
                   :href="config.public.privacyPolicy"
@@ -149,12 +160,15 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useDisplay } from "vuetify";
 import { useUserStore } from "@/store/user";
 import SmallDialog from "@/components/common/SmallDialog.vue";
 import { useCommonStore } from "@/store/common";
 import { useAuth } from "@/composables/auth0";
 
 const config = useRuntimeConfig();
+
+const { xs } = useDisplay();
 
 const auth = useAuth();
 const { cleanup_user_data } = auth;

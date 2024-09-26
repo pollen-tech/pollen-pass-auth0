@@ -11,7 +11,12 @@
         <AuthSideBar />
       </v-col>
       <v-col cols="12" md="8">
-        <div class="ma-8">
+        <div
+          :class="{
+            'my-8': xs,
+            'ma-8': !xs,
+          }"
+        >
           <v-row no-gutters>
             <v-col cols="12" md="12" class="text-left">
               <v-sheet
@@ -44,7 +49,7 @@
                   <template #prepend>
                     <v-icon color="#6B7280" />
                   </template>
-                  {{ emailLocal }}
+                  {{ !xs ? emailLocal : "" }}
                 </v-btn>
               </v-sheet>
             </v-col>
@@ -61,9 +66,7 @@
           <!-- TODO add if user exist -->
           <AuthOtpCode
             v-if="isOtpPage"
-            :reference-id="user.referenceId"
             :phonenumber="user.phone || user.phoneNumber"
-            :phone-verified="user.phoneVerified"
             :is-otp-loading="isOtpLoading"
             :is-otp-valid="isOtpValid"
             @previous-page="goToPhoneNumberPage"
@@ -82,6 +85,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useDisplay } from "vuetify";
 import { useCommonStore } from "~/store/common";
 import { useUserStore } from "~/store/user";
 import { useAuth } from "@/composables/auth0";
@@ -90,6 +94,8 @@ import { useRouter } from "vue-router";
 definePageMeta({
   middleware: "auth",
 });
+
+const { xs } = useDisplay();
 const router = useRouter();
 const auth = useAuth();
 const { cleanup_user_data } = auth;

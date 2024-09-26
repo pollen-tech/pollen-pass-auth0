@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="d-flex flex-column align-center">
       <h3 class="font-weight-bold my-8">{{ notificationTitle }}</h3>
-      <v-form ref="form" class="w-50 text-body-1">
+      <v-form ref="form" :class="['text-body-1', !xs ? 'w-50' : 'w-75']">
         <p class="text-center mb-6">We have sent a 6-digit code to:</p>
         <div class="my-2">
           <p class="font-weight-bold text-center mb-4">
@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import { useDisplay } from "vuetify";
 //import { useUserStore } from '@/store/user';
 
 //const userStore = useUserStore();
@@ -74,10 +75,8 @@
 export default {
   props: {
     phonenumber: { type: String, default: "" },
-    referenceId: { type: String, default: "" },
     isOtpValid: { type: Boolean, default: true },
     isOtpLoading: { type: Boolean, default: false },
-    phoneVerified: { type: Boolean, default: false },
     otpType: { type: String, default: "sms" },
   },
   emits: ["verifyOtpEvent", "previousPage", "setOtpLoading", "sendOtpEvent"],
@@ -92,6 +91,7 @@ export default {
       timerInterval: null,
       config: null,
       isLoading: false,
+      xs: useDisplay().xs,
     };
   },
   computed: {

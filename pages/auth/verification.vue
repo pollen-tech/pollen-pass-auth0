@@ -11,7 +11,12 @@
         <AuthSideBar />
       </v-col>
       <v-col cols="12" md="8">
-        <div class="ma-8">
+        <div
+          :class="{
+            'my-8': xs,
+            'ma-8': !xs,
+          }"
+        >
           <AuthVerification />
         </div>
       </v-col>
@@ -20,9 +25,13 @@
 </template>
 
 <script setup>
+import { useDisplay } from "vuetify";
+
 definePageMeta({
   middleware: "auth",
 });
+
+const { xs } = useDisplay();
 </script>
 
 <style lang="scss" scoped></style>

@@ -32,7 +32,7 @@
             <template #prepend>
               <v-icon color="#6B7280" />
             </template>
-            {{ emailLocal }}
+            {{ !xs ? emailLocal : "" }}
           </v-btn>
         </v-sheet>
       </v-col>
@@ -135,11 +135,14 @@
 
 <script setup>
 import { ref } from "vue";
+import { useDisplay } from "vuetify";
 import { useRuntimeConfig } from "#app";
 import { useUserStore } from "@/store/user";
 import { useAuth } from "@/composables/auth0";
 import { lmsApi } from "~/services/api";
 import { useCommonStore } from "~/store/common";
+
+const { xs } = useDisplay();
 
 const auth = useAuth();
 const { cleanup_user_data } = auth;

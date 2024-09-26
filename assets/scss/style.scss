@@ -108,7 +108,7 @@ body {
 
 @media (max-width: 550px) {
   .bg-signup-container {
-    width: 400px;
+    width: 350px;
   }
 }
 
@@ -181,7 +181,9 @@ body {
 
 .custom-text-field .v-input__details {
   padding-inline: 5px !important;
+  text-align: start !important;
 }
+
 .custom-text-field .v-input__details .v-messages {
   font-size: 14px !important;
 }
@@ -189,8 +191,23 @@ body {
 .custom-text-field {
   margin-top: 5px;
 }
+
+@media (max-width: 550px) {
+  .custom-text-field .v-input__details .v-messages {
+    font-size: 12px !important;
+  }
+  .checkbox .v-input__control {
+    height: 38px !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+.checkbox .v-input__details {
+  margin-bottom: 10px !important;
+}
 .checkbox .v-input__control {
   height: 38px !important;
+  margin-bottom: 5px;
 }
 .custom-button {
   height: 40px !important;
