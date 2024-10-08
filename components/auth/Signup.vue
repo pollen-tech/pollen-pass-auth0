@@ -32,7 +32,7 @@
       }"
     >
       <v-card
-        :width="$vuetify.display.mobile ? 300 : 450"
+        :width="xs ? 300 : 450"
         elevation="0"
         :class="[
           'align-center text-center my-4',
